@@ -1,10 +1,11 @@
 %% SFIG 3.1: Figure chords: No frequency elements in RF
-dest_dir = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\';
-typ = 'muae';
+
 F8 = []; F12 = []; lat8 = []; lat12 = [];
-indxR = 201:400; % corresponds to -300:-100ms to decision
-indx = 401:600;
-alph = .01;
+dest_dir    = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\';
+typ         = 'muae';
+indxR       = 201:400; % corresponds to -300:-100ms to decision
+indx        = 401:600;
+alph        = .01;
 
 for iAn = 1:2
     
@@ -48,9 +49,9 @@ for iAn = 1:2
             end
             
             datestr	= str2num([d{ii}.id(1:4) d{ii}.id(6:7) d{ii}.id(9:10)]);
-            test = mean([d{ii}.res.HI12(:,indxR); d{ii}.res.HI8(:,indxR)],2);
-            ctrl = mean(d{ii}.res.CR(:,indxR),2);
-            pp = anova1([test; ctrl],[zeros(size(test,1),1);ones(size(ctrl,1),1)], 'off');
+            test    = mean([d{ii}.res.HI12(:,indxR); d{ii}.res.HI8(:,indxR)],2);
+            ctrl    = mean(d{ii}.res.CR(:,indxR),2);
+            pp      = anova1([test; ctrl],[zeros(size(test,1),1);ones(size(ctrl,1),1)], 'off');
             
             if pp < alph && sum(d{ii}.nTr>=10) == length(d{ii}.nTr) && datestr - 20190806 <= 0
                 
@@ -59,8 +60,8 @@ for iAn = 1:2
                 c               = c+1;                                                     	% Counter
                 fstim           = size(d{ii}.figfreqs,3);                                     	% Ratio of Fig to Gnd stim
                 
-                latency8(c,:) = d{ii}.sigT8;
-                latency12(c,:) = d{ii}.sigT12;
+                latency8(c,:)   = d{ii}.sigT8;
+                latency12(c,:)  = d{ii}.sigT12;
                 mFIG(c,:)   	= nanmean([d{ii}.res.HI8; d{ii}.res.HI12] ./mBL);       % Figure period - average across all coherence8 trials
                 mCTR(c,:)    	= nanmean(d{ii}.res.CR ./mBL);                          % Control period - average across all presented trials
                 diff(c)         = nanmean(mFIG(c,indxR) - nanmean(mCTR(c,indxR)));
@@ -77,27 +78,25 @@ for iAn = 1:2
             end
         end
         
-        lat8{iAn,iFi} = latency8;
-        lat12{iAn,iFi} = latency12;
-        F8{iAn,iFi} = f8;
-        F12{iAn,iFi} = f12;
-        Df{iAn,iFi} = diff;
-        Wd{iAn,iFi} = wd;
-        [rrr, ppp] = corrcoef(Wd{iAn,iFi}, Df{iAn,iFi});
-        rCorr(iAn,iFi) = rrr(1,2);
-        pCorr(iAn,iFi) = ppp(1,2);
+        lat8{iAn,iFi}   = latency8;
+        lat12{iAn,iFi}  = latency12;
+        F8{iAn,iFi}     = f8;
+        F12{iAn,iFi}    = f12;
+        Df{iAn,iFi}     = diff;
+        Wd{iAn,iFi}     = wd;
+        [rrr, ppp]      = corrcoef(Wd{iAn,iFi}, Df{iAn,iFi});
+        rCorr(iAn,iFi)  = rrr(1,2);
+        pCorr(iAn,iFi)  = ppp(1,2);
     end
 end
 
 pCorr = fdr(pCorr);
 
 %%
-f = figure('Units', 'normalized', 'Position', [0 0 1 1]);
-set(gcf,'color', [1 1 1]);
-axis off
+f   = figure('Units', 'normalized', 'Position', [0 0 1 1]); set(gcf,'color', [1 1 1]); axis off
 col = [0 .9 0; .9 0 0];
 dim = [.2 .2];
-r = linspace(.08, .74,4);
+r   = linspace(.08, .74,4);
 
 for iAn = 1:2
     for iFi = 1:2
@@ -120,7 +119,7 @@ for iAn = 1:2
 end
 
 tmp = fdr([p8,p12]);
-p8 = tmp(1:2,1:2);
+p8  = tmp(1:2,1:2);
 p12 = tmp(1:2,3:4);
 
 for iAn = 1:2
@@ -139,9 +138,9 @@ for iAn = 1:2
             str = 'POS: p = ';
         end
         
-        ax = axes('Position',[c rr dim]); hold on
-        ax.YLabel.String = {'Coh8';'Elements in RF'};
-        ax.FontSize = 14;
+        ax                  = axes('Position',[c rr dim]); hold on
+        ax.YLabel.String    = {'Coh8';'Elements in RF'};
+        ax.FontSize         = 14;
         
         lf8 = [];
         for i = 1:size(F8{iAn, iFi},1)
@@ -149,13 +148,13 @@ for iAn = 1:2
             plot(0:9,polyval(lf8(i,:),0:9),'Color',[.5 .5 .5 .3], 'Marker','none')
         end
         
-        bx = boxplot(F8{iAn, iFi}, 'Colors', col(1,:));
+        bx                  = boxplot(F8{iAn, iFi}, 'Colors', col(1,:));
         set(bx,'MarkerEdgeColor','k')
         set(bx, {'linew'},{2})
-        ax.XAxis.Visible = 'off';
-        ax.YTick = [0 5 10 15];
-        ax.YLim = [-1 16];
-        ax.FontSize = 14;
+        ax.XAxis.Visible    = 'off';
+        ax.YTick            = [0 5 10 15];
+        ax.YLim             = [-1 16];
+        ax.FontSize         = 14;
         box off
         
         if iFi == 1
@@ -192,9 +191,8 @@ for iAn = 1:2
             str = 'POS: p = ';
         end
         
-        ax = axes('Position',[c rr dim]); hold on
-        
-        lf12 = [];
+        ax      = axes('Position',[c rr dim]); hold on
+        lf12    = [];
         for i = 1:size(F12{iAn, iFi},1)
             lf12(i,:) = polyfit(1:8,F12{iAn, iFi}(i,:),1);
             plot(0:9, polyval(lf12(i,:),0:9),'Color',[.5 .5 .5 .3], 'Marker','none')
@@ -205,12 +203,12 @@ for iAn = 1:2
         set(bx, {'linew'},{2})
         box off
         
-        ax.Title.String = [str ' ' num2str(p12(iAn,iFi))];
-        ax.YTick = [0 5 10 15];
-        ax.YLim = [-1 16];
-        ax.YLabel.String = {'Coh12';'Elements in RF'};
-        ax.FontSize = 14;
-        ax.Title.FontSize = 10;
+        ax.Title.String     = [str ' ' num2str(p12(iAn,iFi))];
+        ax.YTick            = [0 5 10 15];
+        ax.YLim             = [-1 16];
+        ax.YLabel.String    = {'Coh12';'Elements in RF'};
+        ax.FontSize         = 14;
+        ax.Title.FontSize   = 10;
 
         if iAn == 2
             ax.YLabel.String = '';
@@ -282,13 +280,13 @@ for iFi = 1:2
         end
     end
     
-    ax.YTick = [100 200 300 400 500];
-    ax.YLim = [30 500];
-    ax.FontSize = 14;
+    ax.YTick        = [100 200 300 400 500];
+    ax.YLim         = [30 500];
+    ax.FontSize     = 14;
     box off
     
-    ax.XTickLabel = {'Coh8', 'Coh12', 'Coh8', 'Coh12'};
-    ax.XTickLabelRotation = 10;
+    ax.XTickLabel           = {'Coh8', 'Coh12', 'Coh8', 'Coh12'};
+    ax.XTickLabelRotation   = 10;
     text(1.35, 450, 'M1', 'FontSize', 14)
     text(3.35, 450, 'M2', 'FontSize', 14)
     
@@ -320,18 +318,18 @@ for iAn = 1:2
         end
         
         sc = scatter(Wd{iAn,iFi}, Df{iAn,iFi});
-        sc.MarkerFaceColor = [0 0 0];
-        sc.MarkerEdgeColor = [0 0 0];
-        ax.FontSize = 14;
-        ax.YLim = [-.4 .5];
-        ax.YTick = [-.4 0 .5];
-        ax.XLim = [0 1];
-        ax.XLabel.String = 'Tuning width [%]';
-        ax.XAxis.Color = [0 0 0];
-        ax.YAxis.Color = [0 0 0];
-        l = lsline;
-        l.LineWidth = 2;
-        l.Color = [1 0 0];
+        sc.MarkerFaceColor  = [0 0 0];
+        sc.MarkerEdgeColor  = [0 0 0];
+        ax.FontSize         = 14;
+        ax.YLim             = [-.4 .5];
+        ax.YTick            = [-.4 0 .5];
+        ax.XLim             = [0 1];
+        ax.XLabel.String    = 'Tuning width [%]';
+        ax.XAxis.Color      = [0 0 0];
+        ax.YAxis.Color      = [0 0 0];
+        l                   = lsline;
+        l.LineWidth         = 2;
+        l.Color             = [1 0 0];
         
         text(.8,.49, ['n = ' num2str(length(Df{iAn,iFi}))], 'FontSize', 10, 'Color', 'k', 'FontWeight', 'bold')
         text(.8,.39, ['r = ' num2str(round(rCorr(iAn,iFi),4))], 'FontSize', 10, 'Color', 'k', 'FontWeight', 'bold')

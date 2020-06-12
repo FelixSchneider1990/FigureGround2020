@@ -15,21 +15,21 @@ clear matD matE
 matE = CVE;
 matD = CVD;
 
-matE(:,1) = [];
-matD(:,1) = [];
+matE(:,1)           = [];
+matD(:,1)           = [];
 matD(end-9:end,:,:) = [];
 
-subjE = repmat({'Eric'}, [(size(matE,1)), 1]);
-subjD = repmat({'Dollar'}, [(size(matD,1)), 1]);
-subj = vertcat(subjE,subjD);
-mat = [matE;matD];
+subjE   = repmat({'Eric'}, [(size(matE,1)), 1]);
+subjD   = repmat({'Dollar'}, [(size(matD,1)), 1]);
+subj    = vertcat(subjE,subjD);
+mat     = [matE;matD];
 
-t = table(subj, mat(:,1), mat(:,2), ...
+t       = table(subj, mat(:,1), mat(:,2), ...
     'VariableName', {'Subject','coh8', 'coh12'});
-meas = table([1 2]','VariableNames',{'Measurements'});
-rm = fitrm(t,'coh8-coh12 ~ Subject','WithinDesign',meas);
-sphere = rm.mauchly;
-ranovaTable = ranova(rm);
+meas    = table([1 2]','VariableNames',{'Measurements'});
+rm      = fitrm(t,'coh8-coh12 ~ Subject','WithinDesign',meas);
+sphere  = rm.mauchly;
+rmTable = ranova(rm);
 
 mean(matE)
 mean(matD)
@@ -40,18 +40,18 @@ mean(matD)
 
 subjects{1} =  'Eric';
 subjects{2} = 'Dollar';
-sess = [];
-id = [];
-RT = [];
-coh = [];
-res = [];
-c = 0;
+sess        = [];
+id          = [];
+RT          = [];
+coh         = [];
+res         = [];
+c           = 0;
 
 for mID = 1:size(subjects,2)
     
     clear allFiles allNames Data
-    monkey = subjects{mID};
-    pth = 'Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\';
+    monkey  = subjects{mID};
+    pth     = 'Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\';
     cd([pth monkey])
     
     allFiles = dir([pth monkey]); % get all files in directory
@@ -59,7 +59,8 @@ for mID = 1:size(subjects,2)
     
     if mID == 1
         xof = 5;
-    else xof = 2;
+    else
+        xof = 2;
     end
         
     for i = 3:size(allNames,2)-xof    
@@ -92,23 +93,23 @@ for mID = 1:size(subjects,2)
                 mid = 2;
             end
             
-            sess = vertcat(sess, repmat(c,size(dmat,1),1));
-            id = vertcat(id, repmat(mid,size(dmat,1),1));            
-            RT = vertcat(RT, dmat(:,3));
-            res = vertcat(res, dmat(:,2));
-            coh = vertcat(coh, dmat(:,7));
+            sess    = vertcat(sess, repmat(c,size(dmat,1),1));
+            id      = vertcat(id, repmat(mid,size(dmat,1),1));            
+            RT      = vertcat(RT, dmat(:,3));
+            res     = vertcat(res, dmat(:,2));
+            coh     = vertcat(coh, dmat(:,7));
 
         end
     end
 end
 
-HIidx = res == 3;
-tbl = table(RT(HIidx),coh(HIidx),sess(HIidx), id(HIidx), 'VariableNames',{'RT','Coh','Sess','ID'});
+HIidx   = res == 3;
+tbl     = table(RT(HIidx),coh(HIidx),sess(HIidx), id(HIidx), 'VariableNames',{'RT','Coh','Sess','ID'});
 
 % lme = fitlme(tbl, 'RT~Coh + ( Coh | Sess ) + ( Coh | ID)'); % random intercept - repeated measures
-lme1 = fitlme(tbl, 'RT ~1+ ( 1 | Sess ) + ( 1 | ID)'); % random model
-lme2 = fitlme(tbl, 'RT~Coh + ( 1 | Sess ) + ( 1 | ID)'); % Coherence as predictor
-stats = compare(lme1,lme2);
+lme1    = fitlme(tbl, 'RT ~1+ ( 1 | Sess ) + ( 1 | ID)'); % random model
+lme2    = fitlme(tbl, 'RT~Coh + ( 1 | Sess ) + ( 1 | ID)'); % Coherence as predictor
+stats   = compare(lme1,lme2);
 [~,~,lmeStat] = fixedEffects(lme2);
 
 %% FIG2 %%%
@@ -116,23 +117,23 @@ stats = compare(lme1,lme2);
 % Main Effect
 clear figE figD ctrE ctrD subjE_fig subjD_fig subjE_ctr subjD_ctr subj Fg Ct
 % indx = 201:400;
-indx = 401:600;
+indx        = 401:600;
 
-figE = mean(FIG{1}(:,indx),2);
-figD = mean(FIG{2}(:,indx),2);
-ctrE = mean(CTR{1}(:,indx),2);
-ctrD = mean(CTR{2}(:,indx),2);
+figE        = mean(FIG{1}(:,indx),2);
+figD        = mean(FIG{2}(:,indx),2);
+ctrE        = mean(CTR{1}(:,indx),2);
+ctrD        = mean(CTR{2}(:,indx),2);
 
-Fg = [ones(size(figE,1),1);ones(size(figD,1),1)];
-Ct = [ones(size(ctrE,1),1)+1;ones(size(ctrD,1),1)+1];
+Fg          = [ones(size(figE,1),1);ones(size(figD,1),1)];
+Ct          = [ones(size(ctrE,1),1)+1;ones(size(ctrD,1),1)+1];
 
-subjE_fig = repmat({'Eric'}, [(size(figE,1)), 1]);
-subjD_fig = repmat({'Dollar'}, [(size(figD,1)), 1]);
-subjE_ctr = repmat({'Eric'}, [(size(ctrE,1)), 1]);
-subjD_ctr = repmat({'Dollar'}, [(size(ctrD,1)), 1]);
-subj = vertcat(subjE_fig,subjD_fig,subjE_ctr,subjD_ctr);
+subjE_fig   = repmat({'Eric'}, [(size(figE,1)), 1]);
+subjD_fig   = repmat({'Dollar'}, [(size(figD,1)), 1]);
+subjE_ctr   = repmat({'Eric'}, [(size(ctrE,1)), 1]);
+subjD_ctr   = repmat({'Dollar'}, [(size(ctrD,1)), 1]);
+subj        = vertcat(subjE_fig,subjD_fig,subjE_ctr,subjD_ctr);
 
-[p, tbl, stats]= anovan([figE;figD;ctrE;ctrD],{subj, [Fg;Ct]},'varnames',{'subj','cond'});
+[p, tbl, stats] = anovan([figE;figD;ctrE;ctrD],{subj, [Fg;Ct]},'varnames',{'subj','cond'});
 
 % Perceptage responsive
 size(FIG{1},1)/size(muaeE,2)
@@ -140,7 +141,7 @@ size(FIG{2},1)/size(muaeD,2)
 
 % Peak delay
 on = 0:50:550;
-[pk, loc] = findpeaks(mean(CTR{2}), 'MinPeakHeight',1.055)
+[pk, loc] = findpeaks(mean(CTR{2}), 'MinPeakHeight',1.055);
 avgPK = mean(loc - on);
 
 %% FIG 2e %%%
@@ -158,7 +159,7 @@ mFR = [mean(mt8{1,1}(:,401:600),2); ...
     mean(mc{2,1}(:,401:600),2); ...
     mean(mc{2,2}(:,401:600),2)];
 
-sz = cellfun(@size, mt8, 'UniformOutput', false);
+sz   = cellfun(@size, mt8, 'UniformOutput', false);
 cond = [zeros(sz{1,1}(1),1)+1; ...
     zeros(sz{1,2}(1),1)+1; ...
     zeros(sz{2,1}(1),1)+1; ...
@@ -198,7 +199,7 @@ subj = [zeros(sz{1,1}(1),1)+1; ...
     zeros(sz{2,1}(1),1)+2; ...
     zeros(sz{2,2}(1),1)+2];
 
-[p, tbl, stats]= anovan(mFR,{cond,field,subj},'varnames',{'cond','field','subj'});
+[p, tbl, stats] = anovan(mFR,{cond,field,subj},'varnames',{'cond','field','subj'});
 
 % Mean activity
 antE = mean(mean(mc{1,1}(:,401:600),2));
@@ -221,7 +222,7 @@ field = [zeros(sz{1,1}(2),1)+1; ...
     zeros(sz{2,1}(2),1)+1; ...
     zeros(sz{2,2}(2),1)+2];
 
-[p, tbl, stats]= anovan(mFR,{field},'varnames',{'field'});
+[p, tbl, stats] = anovan(mFR,{field},'varnames',{'field'});
 
 % Coherence post-hoc test
 clear p
@@ -301,7 +302,7 @@ field = [zeros(sz{1,1}(1),1)+1; ...
     zeros(sz{2,1}(1),1)+1; ...
     zeros(sz{2,2}(1),1)+2];
 
-[p, tbl, stats]= anovan(Lat,{coh,field},'varnames',{'coh','field'});
+[p, tbl, stats] = anovan(Lat,{coh,field},'varnames',{'coh','field'});
 
 %%% Median latency / SEM
 [nanmedian(lat8{1,1}(:,3)) nanstd(lat8{1,1}(:,3)) / sqrt(length(lat8{1,1}(:,3)))]
@@ -465,8 +466,8 @@ pzero(1) = signrank(powAB);
 pzero(2) = signrank(powGA);
 fdr(pzero)
 
-[p, tbl, stats]= anovan(powAB,{coh,field},'varnames',{'coh','field'});
-[p, tbl, stats]= anovan(powGA,{coh,field},'varnames',{'coh','field'});
+[p, tbl, stats] = anovan(powAB,{coh,field},'varnames',{'coh','field'});
+[p, tbl, stats] = anovan(powGA,{coh,field},'varnames',{'coh','field'});
 
 
 nanmean(powAB(field == 0))

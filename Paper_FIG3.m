@@ -2,7 +2,7 @@
 %%% FELIX SCHNEIDER, 02/2020 %%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% FIG 5 %%%%%%%%%%%%%%%%%%%%%%%
+%%% FIG 3 %%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Eric\Summary\muae.mat')

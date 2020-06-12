@@ -4,52 +4,52 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% FIG 1 %%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 clearvars -except muaeD muaeE data lfpD lfpE
-f       = figure('Units', 'normalized', 'Position', [0 0 1 1]);
-set(gcf,'color', [1 1 1]);
+f       = figure('Units', 'normalized', 'Position', [0 0 1 1]); set(gcf,'color', [1 1 1]);
 ax0  	= axes('Position',[0 0 1 1],'Visible','off');
 col     = [0 .9 0; .9 0 0; 0 .9 0; .9 0 0];
 
-row = linspace(.05,.84,5);
-clm = linspace(.1,.76,4);
-dim = [.15 .2];
+row     = linspace(.05,.84,5);
+clm     = linspace(.1,.76,4);
+dim     = [.15 .2];
 
 %%% SFG stim %%%
 load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Dollar\2019-05-20_12-01-40\Data\DataStruct_2019-05-20.mat')
-freqMat = data.stimSpecs.freq_mat;
-axA = axes('Position',[row(1) clm(4) dim]); hold on
-no = 4;
-idx = data.behaviour.stimNrPool == data.behaviour.stimID(no);
-figOn = unique(data.behaviour.figOn(idx));
-figElem = data.stimSpecs.fig{no};
+freqMat             = data.stimSpecs.freq_mat;
+axA                 = axes('Position',[row(1) clm(4) dim]); hold on
+no                  = 4;
+idx                 = data.behaviour.stimNrPool == data.behaviour.stimID(no);
+figOn               = unique(data.behaviour.figOn(idx));
+figElem             = data.stimSpecs.fig{no};
 plotSFGstim(freqMat, no, figOn, figElem)
-axA.XAxis.Visible = 'off';
+axA.XAxis.Visible   = 'off';
 text(31,10000, 'Figure', 'FontSize', 14, 'Color', 'r', 'FontWeight', 'bold')
 text(5,10000, 'Ground', 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
-axA.Position(1) = row(1);
-axA.Position(3:4) = [.15 .2];
-axA.XAxis.Visible = 'off';
+axA.Position(1)     = row(1);
+axA.Position(3:4)   = [.15 .2];
+axA.XAxis.Visible   = 'off';
 
-axA = axes('Position',[row(2) clm(4) dim]); hold on
-idx = data.behaviour.stimNrPool == data.behaviour.stimID(16);
-figOn = unique(data.behaviour.figOn(idx));
+axA                 = axes('Position',[row(2) clm(4) dim]); hold on
+idx                 = data.behaviour.stimNrPool == data.behaviour.stimID(16);
+figOn               = unique(data.behaviour.figOn(idx));
 plotSFGstim(freqMat, 16, figOn, figElem)
-axA.Position(1) = row(2);
-axA.Position(3:4) = [.15 .2];
-axA.XAxis.Visible = 'off';
-axA.YAxis.Visible = 'off';
+axA.Position(1)     = row(2);
+axA.Position(3:4)   = [.15 .2];
+axA.XAxis.Visible   = 'off';
+axA.YAxis.Visible   = 'off';
 
 %%% Paradigm %%%
-axP = axes('Position',[row(1) clm(3)+.125 dim]); hold on
-axP.FontSize = 14;
-axP.XLim = [250 3750];
-axP.XTick = [500 2000 3500];
-axP.XTickLabel = {'0','1500', '3000'};
-axP.XLabel.String = 'Time [ms]';
-axP.YLim = [0 6];
-axP.YTick = [0 2 4];
-axP.YTickLabel = {'Sound','Figure', 'Response'};
-axP.YAxis.FontSize = 12;
+axP                 = axes('Position',[row(1) clm(3)+.125 dim]); hold on
+axP.FontSize        = 14;
+axP.XLim            = [250 3750];
+axP.XTick           = [500 2000 3500];
+axP.XTickLabel      = {'0','1500', '3000'};
+axP.XLabel.String   = 'Time [ms]';
+axP.YLim            = [0 6];
+axP.YTick           = [0 2 4];
+axP.YTickLabel      = {'Sound','Figure', 'Response'};
+axP.YAxis.FontSize  = 12;
 plot([zeros(1,500),ones(1,3000),zeros(1,500)], 'LineWidth', 2, 'Color','k')
 plot([zeros(1,1900)+2,zeros(1,1000)+3,zeros(1,1200)+2], 'LineWidth', 2, 'Color','k')
 plot([zeros(1,2000)+4,zeros(1,900)+5,zeros(1,1200)+4], 'LineWidth', 2, 'Color','k')
@@ -57,68 +57,68 @@ text(300,5.5, 'Test trial', 'FontSize', 12, 'Color', 'k')
 text(2325,4.5, 'HI', 'FontSize', 10, 'Color', [.3 .3 .3])
 text(1300,4.5, 'MI', 'FontSize', 10, 'Color', [.3 .3 .3])
 text(3100,4.5, 'MI', 'FontSize', 10, 'Color', [.3 .3 .3])
-axP.Position(1) = row(1);
-axP.Position(3:4) = [.15 .1];
+axP.Position(1)     = row(1);
+axP.Position(3:4)   = [.15 .1];
 
-axP = axes('Position',[row(2) clm(3)+.125 dim]); hold on
-axP.FontSize = 14;
-axP.XLim = [250 3750];
-axP.XTick = [500 2000 3500];
-axP.XTickLabel = {'0','1500', '3000'};
-axP.XLabel.String = 'Time [ms]';
-axP.YLim = [0 6];
-axP.YAxis.Visible = 'off';
+axP                 = axes('Position',[row(2) clm(3)+.125 dim]); hold on
+axP.FontSize        = 14;
+axP.XLim            = [250 3750];
+axP.XTick           = [500 2000 3500];
+axP.XTickLabel      = {'0','1500', '3000'};
+axP.XLabel.String   = 'Time [ms]';
+axP.YLim            = [0 6];
+axP.YAxis.Visible   = 'off';
 plot([zeros(1,500),ones(1,3000),zeros(1,500)], 'LineWidth', 2, 'Color','k')
 plot([zeros(1,4000)+2], 'LineWidth', 2, 'Color','k')
 plot([zeros(1,3500)+4,zeros(1,500)+5], 'LineWidth', 2, 'Color','k')
 text(300,5.5, 'Control trial', 'FontSize', 12, 'Color', 'k')
 text(3600,4.5, 'CR', 'FontSize', 10, 'Color', [.3 .3 .3])
 text(2100,4.5, 'FA', 'FontSize', 10, 'Color', [.3 .3 .3])
-axP.Position(1) = row(2);
-axP.Position(3:4) = [.15 .1];
+axP.Position(1)     = row(2);
+axP.Position(3:4)   = [.15 .1];
 
 
 %%% Behaviour %%%
 load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Eric\Summary\dprime.mat')
-dpE = dp;
+dpE     = dp;
 load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Dollar\Summary\dprime.mat')
-dpD = dp;
+dpD     = dp;
 load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Eric\Summary\mRT.mat')
-mRTE = mRT;
+mRTE    = mRT;
 load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Dollar\Summary\mRT.mat')
-mRTD = mRT;
+mRTD    = mRT;
 load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Eric\Summary\RTsd.mat')
-sdRTE = RTsd;
+sdRTE   = RTsd;
 load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Dollar\Summary\RTsd')
-sdRTD = RTsd;
+sdRTD   = RTsd;
 
-of = 0.009;
-bwdt = 30;
-lw = 2;
-arrE = [ones(size(dpE,1),1); ones(size(dpE,1),1)+1;];
-arrD = [ones(size(dpD,1)-10,1)+2; ones(size(dpD,1)-10,1)+3];
+of      = 0.009;
+bwdt    = 30;
+lw      = 2;
+arrE    = [ones(size(dpE,1),1); ones(size(dpE,1),1)+1;];
+arrD    = [ones(size(dpD,1)-10,1)+2; ones(size(dpD,1)-10,1)+3];
 
 % disp(mean([dpE(:,2), dpE(:,3)]))
 % disp(nanmean([dpD(1:end-10,2), dpD(1:end-10,3)]))
 
-mat = vertcat(dpE(:,2), dpE(:,3), dpD(1:end-10,2), dpD(1:end-10,3));
-arr = vertcat(arrE, arrD);
+mat     = vertcat(dpE(:,2), dpE(:,3), dpD(1:end-10,2), dpD(1:end-10,3));
+arr     = vertcat(arrE, arrD);
 
-axB = axes('Position',[row(3)+of clm(3)+.125 dim]); hold on
+axB     = axes('Position',[row(3)+of clm(3)+.125 dim]); hold on
 line([2.5 2.5],[-1 1000], 'LineStyle', ':', 'LineWidth',2, 'Color','k')
-bx = boxplot(mat, arr, 'Colors', 'k');
+bx      = boxplot(mat, arr, 'Colors', 'k');
 set(bx(end,:),'Visible','off')
 set(bx,'MarkerEdgeColor','k')
 set(bx, {'linew'},{lw})
-axB.YLabel.String = 'd prime';
-axB.YLim = [-.2 5.2];
-axB.XTick = [1 2 3 4];
-axB.XTickLabel = {'Coh8' 'Coh12' 'Coh8' 'Coh12'};
-axB.XColor = [0 0 0];
-axB.YColor = [0 0 0];
-axB.FontSize = 14;
-box off
+axB.YLabel.String   = 'd prime';
+axB.YLim            = [-.2 5.2];
+axB.XTick           = [1 2 3 4];
+axB.XTickLabel      = {'Coh8' 'Coh12' 'Coh8' 'Coh12'};
+axB.XColor          = [0 0 0];
+axB.YColor          = [0 0 0];
+axB.FontSize        = 14;
 axB.XTickLabelRotation = 30;
+box off
 
 text(1.3,5.2, 'M1', 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
 text(3.3,5.2, 'M2', 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
@@ -136,19 +136,19 @@ for i = 1:4
     end
     sc.SizeData = 20;
 end
-axB.Position(1) = row(3)+of;
-axB.Position(2) = clm(3)+.125;
-axB.Position(3:4) = [1/7 (clm(4)+.2)-(clm(3)+.125)];
+axB.Position(1)     = row(3)+of;
+axB.Position(2)     = clm(3)+.125;
+axB.Position(3:4)   = [1/7 (clm(4)+.2)-(clm(3)+.125)];
 
-y = diff(axB.YLim)*.06;
-yy = axB.YLim(2) - y;
+y                   = diff(axB.YLim)*.06;
+yy                  = axB.YLim(2) - y;
 for ii = 1:2
     d1 = []; d2 = [];
     if ii == 1
-        d1 = dpE(:,2); d2 = dpE(:,3);
+        d1  = dpE(:,2); d2 = dpE(:,3);
         var = 1;
     else
-        d1 = dpD(1:end-10,2); d2 = dpD(1:end-10,3);
+        d1  = dpD(1:end-10,2); d2 = dpD(1:end-10,3);
         var = 3;
     end
     
@@ -169,30 +169,30 @@ end
 
 %%% RT %%%%
 arrE = []; arrD = []; mat = []; arr = [];
-arrE = [ones(size(mRTE,1),1); ones(size(mRTE,1),1)+1;];
-arrD = [ones(size(mRTD,1)-10,1)+2; ones(size(mRTD,1)-10,1)+3];
-mat = vertcat(mRTE(:,2), mRTE(:,3), mRTD(1:end-10,2), mRTD(1:end-10,3));
-arr = vertcat(arrE,[], arrD);
+arrE    = [ones(size(mRTE,1),1); ones(size(mRTE,1),1)+1;];
+arrD    = [ones(size(mRTD,1)-10,1)+2; ones(size(mRTD,1)-10,1)+3];
+mat     = vertcat(mRTE(:,2), mRTE(:,3), mRTD(1:end-10,2), mRTD(1:end-10,3));
+arr     = vertcat(arrE,[], arrD);
 
 % disp(mean([mRTE(:,2), mRTE(:,3)]))
 % disp(nanmean([mRTD(1:end-10,2), mRTD(1:end-10,3)]))
 
-axB = axes('Position',[row(4)+of clm(3)+.125 dim]); hold on
+axB         = axes('Position',[row(4)+of clm(3)+.125 dim]); hold on
 line([2.5 2.5],[-1 1000], 'LineStyle', ':', 'LineWidth',2, 'Color','k')
-bx = boxplot(mat, arr, 'Colors', 'k');
+bx          = boxplot(mat, arr, 'Colors', 'k');
 set(bx(end,:),'Visible','off')
 set(bx,'MarkerEdgeColor','k')
 set(bx, {'linew'},{lw})
-axB.YLabel.String = 'Reaction time [ms]';
-axB.XTick = [1 2 3 4];
-axB.XTickLabel = {'Coh8' 'Coh12' 'Coh8' 'Coh12'};
-axB.YLim = [400 850];
-axB.YTick = [400 600 800];
-axB.XColor = [0 0 0];
-axB.YColor = [0 0 0];
-axB.FontSize = 14;
-box off
+axB.YLabel.String   = 'Reaction time [ms]';
+axB.XTick           = [1 2 3 4];
+axB.XTickLabel      = {'Coh8' 'Coh12' 'Coh8' 'Coh12'};
+axB.YLim        	= [400 850];
+axB.YTick           = [400 600 800];
+axB.XColor          = [0 0 0];
+axB.YColor          = [0 0 0];
+axB.FontSize        = 14;
 axB.XTickLabelRotation = 30;
+box off
 
 text(1.3,850, 'M1', 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
 text(3.3,850, 'M2', 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
@@ -211,19 +211,19 @@ for i = 1:4
     sc.SizeData = 20;
 end
 
-axB.Position(1) = row(4)+of;
-axB.Position(2) = clm(3)+.125;
-axB.Position(3:4) = [1/7 (clm(4)+.2)-(clm(3)+.125)];
+axB.Position(1)     = row(4)+of;
+axB.Position(2)     = clm(3)+.125;
+axB.Position(3:4)   = [1/7 (clm(4)+.2)-(clm(3)+.125)];
 
-y = diff(axB.YLim)*.06;
-yy = axB.YLim(2) - y;
+y                   = diff(axB.YLim)*.06;
+yy                  = axB.YLim(2) - y;
 for ii = 1:2
     d1 = []; d2 = [];
     if ii == 1
-        d1 = mRTE(:,2); d2 = mRTE(:,3);
+        d1  = mRTE(:,2); d2 = mRTE(:,3);
         var = 1;
     else
-        d1 = mRTD(1:end-10,2); d2 = mRTD(1:end-10,3);
+        d1  = mRTD(1:end-10,2); d2 = mRTD(1:end-10,3);
         var = 3;
     end
     
@@ -243,35 +243,35 @@ for ii = 1:2
 end
 
 %%% CV %%%
-CVE = sdRTE./mRTE;
-CVD = sdRTD./mRTD;
+CVE     = sdRTE./mRTE;
+CVD     = sdRTD./mRTD;
 
 % disp(mean(CVE))
 % disp(nanmean(CVD(1:end-10,:)))
 
 arrE = []; arrD = []; mat = []; arr = [];
-arrE = [ones(size(CVE,1),1); ones(size(CVE,1),1)+1;];
-arrD = [ones(size(CVD,1)-10,1)+2; ones(size(CVD,1)-10,1)+3];
+arrE    = [ones(size(CVE,1),1); ones(size(CVE,1),1)+1;];
+arrD    = [ones(size(CVD,1)-10,1)+2; ones(size(CVD,1)-10,1)+3];
 
-mat = vertcat(CVE(:,2), CVE(:,3),CVD(1:end-10,2), CVD(1:end-10,3));
-arr = vertcat(arrE, arrD);
+mat     = vertcat(CVE(:,2), CVE(:,3),CVD(1:end-10,2), CVD(1:end-10,3));
+arr     = vertcat(arrE, arrD);
 
-axB = axes('Position',[row(5)+of clm(3)+.125 dim]); hold on
+axB     = axes('Position',[row(5)+of clm(3)+.125 dim]); hold on
 line([2.5 2.5],[-1 1000], 'LineStyle', ':', 'LineWidth',2, 'Color','k')
-bx = boxplot(mat, arr, 'Colors', 'k');
+bx      = boxplot(mat, arr, 'Colors', 'k');
 set(bx(end,:),'Visible','off')
 set(bx,'MarkerEdgeColor','k')
 set(bx, {'linew'},{lw})
 axB.YLabel.String = 'Coefficient of variation';
-axB.YLim = [0.1 .35];
-axB.YTick = [.1 .2 .3];
-axB.XTick = [1 2 3 4];
-axB.XTickLabel = {'Coh8' 'Coh12' 'Coh8' 'Coh12'};
-axB.XColor = [0 0 0];
-axB.YColor = [0 0 0];
-box off
-axB.FontSize = 14;
+axB.YLim            = [0.1 .35];
+axB.YTick           = [.1 .2 .3];
+axB.XTick           = [1 2 3 4];
+axB.XTickLabel      = {'Coh8' 'Coh12' 'Coh8' 'Coh12'};
+axB.XColor          = [0 0 0];
+axB.YColor          = [0 0 0];
+axB.FontSize        = 14;
 axB.XTickLabelRotation = 30;
+box off
 
 text(1.3,.35, 'M1', 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
 text(3.3,.35, 'M2', 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
@@ -290,19 +290,19 @@ for i = 1:4
     sc.SizeData = 20;
 end
 
-axB.Position(1) = row(5)+of;
-axB.Position(2) = clm(3)+.125;
-axB.Position(3:4) = [1/7 (clm(4)+.2)-(clm(3)+.125)];
+axB.Position(1)     = row(5)+of;
+axB.Position(2)     = clm(3)+.125;
+axB.Position(3:4)   = [1/7 (clm(4)+.2)-(clm(3)+.125)];
 
-y = diff(axB.YLim)*.06;
-yy = axB.YLim(2) - y;
+y                   = diff(axB.YLim)*.06;
+yy                  = axB.YLim(2) - y;
 for ii = 1:2
     d1 = []; d2 = [];
     if ii == 1
-        d1 = CVE(:,2); d2 = CVE(:,3);
+        d1  = CVE(:,2); d2 = CVE(:,3);
         var = 1;
     else
-        d1 = CVD(1:end-10,2); d2 = CVD(1:end-10,3);
+        d1  = CVD(1:end-10,2); d2 = CVD(1:end-10,3);
         var = 3;
     end
     
@@ -653,40 +653,40 @@ for iAn = 1:2
     cb.Ticks = [log(frex(1)),log(frex(7)),log(frex(11))];
     cb.TickLabels = {num2str(frex(1)), num2str(frex(7)), ['>' num2str(frex(11))]};
     
-    cm = [back; gray(256)];
-    axCB = axes('Position',[row(5) clm(2)+.05 .001 .1]);
-    axCB.Visible = 'off';
+    cm              = [back; gray(256)];
+    axCB            = axes('Position',[row(5) clm(2)+.05 .001 .1]);
+    axCB.Visible    = 'off';
     colormap(axCB, cm)
-    cb = colorbar(axCB);
-    cb.Color = [0 0 0];
-    cb.Position(3) = .01;
-    cb.Ticks = [];
+    cb              = colorbar(axCB);
+    cb.Color        = [0 0 0];
+    cb.Position(3)  = .01;
+    cb.Ticks        = [];
     
-    axL1.YTick = yax;
+    axL1.YTick      = yax;
     axL1.YTickLabel = ytick;
-    axL1.FontSize = 14;
+    axL1.FontSize   = 14;
     axL1.YAxis.Visible = 'off';
-    cm = [back; lcmap];
+    cm              = [back; lcmap];
     colormap(axL1, cm)
     
-    axCB = axes('Position',[row(5)+.09 clm(2)+.05 .001 .1]);
-    axCB.Visible = 'off';
+    axCB                = axes('Position',[row(5)+.09 clm(2)+.05 .001 .1]);
+    axCB.Visible        = 'off';
     colormap(axCB, lcmap)
-    cb = colorbar(axCB);
-    cb.Color = [0 0 0];
-    cb.Position(3) = .01;
-    cb.Label.String = 'Latency [ms]';
-    cb.FontSize = 12;
+    cb                  = colorbar(axCB);
+    cb.Color            = [0 0 0];
+    cb.Position(3)      = .01;
+    cb.Label.String     = 'Latency [ms]';
+    cb.FontSize         = 12;
     caxis([20 80])
-    cb.Ticks = [20 50 80];
-    cb.TickLabels = {'20' '40' '>80'};
+    cb.Ticks            = [20 50 80];
+    cb.TickLabels       = {'20' '40' '>80'};
     
     if iAn == 2
-        axPL.YTick = yax;
+        axPL.YTick      = yax;
         axPL.YTickLabel = ytick;
-        axPL.YTick = yax;
-        axPL.XTick = xax;
-        axPL.FontSize = 14;
+        axPL.YTick      = yax;
+        axPL.XTick      = xax;
+        axPL.FontSize   = 14;
         axPL.XLabel.String = 'Grid position ML [mm]';
         axPL.YAxis.Visible = 'off';
         cm = [back; gray(256)];
@@ -718,10 +718,9 @@ addpath X:\Felix\Scripts\Stuff\export_fig-master
 
 %% SFIG Raw BF %%%%
 
-f = figInit('fig'); axis off
-set(gcf,'color',[1 1 1])
+f       = figInit('fig'); axis off; set(gcf,'color',[1 1 1])
 ax0  	= axes('Position',[0 0 1 1],'Visible','off');
-dim = [.4 .4];
+dim     = [.4 .4];
 
 for iAn = 1:2
     
@@ -753,7 +752,7 @@ for iAn = 1:2
         axT2 = axes('Position',[.1 .1 dim]); hold on; axis equal
     end
     
-    fi  = fill([0 0 20 20],[-20 0 0 -20], back, 'LineStyle','none');
+    fi      = fill([0 0 20 20],[-20 0 0 -20], back, 'LineStyle','none');
     C       = unique(ccoord(:,1:2),'rows');
     R       = .25 ;                                                           	% Radius of circle
     th      = linspace(0,2*pi) ;
@@ -777,7 +776,7 @@ for iAn = 1:2
         axL2 = axes('Position',[.55 .1 dim]); hold on; axis equal
     end
     
-    fi  = fill([0 0 20 20],[-20 0 0 -20], back, 'LineStyle','none');
+    fi      = fill([0 0 20 20],[-20 0 0 -20], back, 'LineStyle','none');
     C       = unique(ccoord(:,1:2),'rows');
     R       = .25 ;                                                           	% Radius of circle
     th      = linspace(0,2*pi) ;
@@ -786,7 +785,7 @@ for iAn = 1:2
     for i = 1:size(C,1)
         rowfind     = (ccoord(:,1:2) - C(i,:)) == 0;
         idx         = sum(rowfind,2) == 2;
-        lty          = mean(latmat(idx));                                   	% Show mean BF for overlapping coordinates
+        lty        	= mean(latmat(idx));                                   	% Show mean BF for overlapping coordinates
         if isnan(lty)
             continue
         end
@@ -808,57 +807,57 @@ for iAn = 1:2
     end
     
     if iAn == 1
-        axT2.YLabel.String = {'M1';'Distance IAL [mm]'};
-        axT2.XAxis.Visible = 'off';
-        axL2.XAxis.Visible = 'off';
-        axT2.Title.String = 'Tonotopy';
-        axL2.Title.String = 'Peak Latency';
+        axT2.YLabel.String  = {'M1';'Distance IAL [mm]'};
+        axT2.XAxis.Visible  = 'off';
+        axL2.XAxis.Visible  = 'off';
+        axT2.Title.String   = 'Tonotopy';
+        axL2.Title.String   = 'Peak Latency';
     else
-        axT2.YLabel.String = {'M2';'Distance IAL [mm]'};
+        axT2.YLabel.String  = {'M2';'Distance IAL [mm]'};
     end
     
-    axT2.YTick = yax;
-    axT2.YTickLabel = ytick;
-    axT2.XTick = xax;
-    axT2.FontSize = 14;
-    axT2.XLabel.String = 'Grid position ML [mm]';
+    axT2.YTick              = yax;
+    axT2.YTickLabel         = ytick;
+    axT2.XTick              = xax;
+    axT2.FontSize           = 14;
+    axT2.XLabel.String      = 'Grid position ML [mm]';
     
-    axL2.XLabel.String = 'Grid position ML [mm]';
-    axL2.YTick = yax;
-    axL2.YTickLabel = ytick;
-    axL2.XTick = xax;
-    axL2.FontSize = 14;
-    axL2.YAxis.Visible = 'off';
+    axL2.XLabel.String      = 'Grid position ML [mm]';
+    axL2.YTick              = yax;
+    axL2.YTickLabel         = ytick;
+    axL2.XTick              = xax;
+    axL2.FontSize           = 14;
+    axL2.YAxis.Visible      = 'off';
     
 end
 
-cm = [back; flipud(jet(256))];
-lcmap = [linspace(0,1,50)', linspace(0,1,50)', ones(50,1)];
+cm      = [back; flipud(jet(256))];
+lcmap   = [linspace(0,1,50)', linspace(0,1,50)', ones(50,1)];
 
-axCB = axes('Position',[.36 .73 .001 .2]);
-axCB.Visible = 'off';
+axCB                        = axes('Position',[.36 .73 .001 .2]);
+axCB.Visible                = 'off';
 colormap(axCB, cm)
-cb = colorbar(axCB);
-cb.Color = [.9 .9 .9];
-cb.Position(3) = .01;
-cb.Label.String = 'Best frequency [Hz]';
-cb.FontSize = 12;
+cb                          = colorbar(axCB);
+cb.Color                    = [.9 .9 .9];
+cb.Position(3)              = .01;
+cb.Label.String             = 'Best frequency [Hz]';
+cb.FontSize                 = 12;
 caxis([log(frex(1)) log(frex(11))])
 caxis([5 log(frex(11))])
-cb.Ticks = [log(frex(1)),log(frex(7)),log(frex(11))];
-cb.TickLabels = {num2str(frex(1)), num2str(frex(7)), ['>' num2str(frex(11))]};
+cb.Ticks                    = [log(frex(1)),log(frex(7)),log(frex(11))];
+cb.TickLabels               = {num2str(frex(1)), num2str(frex(7)), ['>' num2str(frex(11))]};
 
-axCB = axes('Position',[.81 .73 .001 .2]);
-axCB.Visible = 'off';
+axCB                        = axes('Position',[.81 .73 .001 .2]);
+axCB.Visible                = 'off';
 colormap(axCB, lcmap)
-cb = colorbar(axCB);
-cb.Color = [.9 .9 .9];
-cb.Position(3) = .01;
-cb.Label.String = 'Latency [ms]';
-cb.FontSize = 12;
+cb                          = colorbar(axCB);
+cb.Color                    = [.9 .9 .9];
+cb.Position(3)              = .01;
+cb.Label.String             = 'Latency [ms]';
+cb.FontSize                 = 12;
 caxis([20 80])
-cb.Ticks = [20 50 80];
-cb.TickLabels = {'20' '40' '>80'};
+cb.Ticks                    = [20 50 80];
+cb.TickLabels               = {'20' '40' '>80'};
 
 addpath X:\Felix\Scripts\Stuff\export_fig-master
 % export_fig([dest_dir 'SFIG1'], '-r400',f);

@@ -214,23 +214,23 @@ for iAn = 1:2
         load([dest_dir 'raw\tMap_' animalID '_' typ  '.mat']);
         AP      = find(logical(sum(~isnan(mfr_mat),2)));
         ML      = find(logical(sum(~isnan(mfr_mat))));
-        [x,y] = coreBoundary(mfr_mat,AP,ML,false,animalID);
+        [x,y]   = coreBoundary(mfr_mat,AP,ML,false,animalID);
         [antM, posM] = sortUnits(x,y,muaeE);
     elseif iAn == 2
         animalID = 'Dollar';
         load([dest_dir 'raw\tMap_' animalID '_' typ  '.mat']);
         AP      = find(logical(sum(~isnan(mfr_mat),2)));
         ML      = find(logical(sum(~isnan(mfr_mat))));
-        [x,y] = coreBoundary(mfr_mat,AP,ML,false,animalID);
+        [x,y]   = coreBoundary(mfr_mat,AP,ML,false,animalID);
         [antM, posM] = sortUnits(x,y,muaeD);
     end
     
     for iFi = 1:2 
         if iFi == 1
-            d = antM;
+            d   = antM;
             str = 'ant';
         else
-            d = posM;
+            d   = posM;
             str = 'pos';
         end
         
@@ -242,23 +242,23 @@ for iAn = 1:2
                 continue
             end
             
-            datestr	= str2num([d{ii}.id(1:4) d{ii}.id(6:7) d{ii}.id(9:10)]);
-            test = mean([d{ii}.res.HI12(:,indx); d{ii}.res.HI8(:,indx)],2);
-            ctrl = mean(d{ii}.res.CR(:,indx),2);
-            pp = anova1([test; ctrl],[zeros(size(test,1),1);ones(size(ctrl,1),1)], 'off');
+            datestr     = str2num([d{ii}.id(1:4) d{ii}.id(6:7) d{ii}.id(9:10)]);
+            test        = mean([d{ii}.res.HI12(:,indx); d{ii}.res.HI8(:,indx)],2);
+            ctrl        = mean(d{ii}.res.CR(:,indx),2);
+            pp          = anova1([test; ctrl],[zeros(size(test,1),1);ones(size(ctrl,1),1)], 'off');
             
             if pp < alph && sum(d{ii}.nTr>=10) == length(d{ii}.nTr) && datestr - 20190806 <= 0
                 mBL         = nanmean(nanmean(d{ii}.on.fullAvg(:,101:500),2));        	% Average BL response
                 c = c+1;
-                hi8(c,:) = nanmean((muaeD{ii}.res.HI8)./mBL);
-                hi12(c,:) = nanmean((muaeD{ii}.res.HI12)./mBL);
-                cr(c,:) = nanmean((muaeD{ii}.res.CR)./mBL);
+                hi8(c,:)    = nanmean((muaeD{ii}.res.HI8)./mBL);
+                hi12(c,:)   = nanmean((muaeD{ii}.res.HI12)./mBL);
+                cr(c,:)     = nanmean((muaeD{ii}.res.CR)./mBL);
                 
             end
         end
-        HI8{iAn, iFi} = hi8;
-        HI12{iAn, iFi} = hi12;
-        CR{iAn, iFi} = cr;
+        HI8{iAn, iFi}   = hi8;
+        HI12{iAn, iFi}  = hi12;
+        CR{iAn, iFi}    = cr;
     end 
 end
 
@@ -266,9 +266,9 @@ end
 for iAn = 1:2
     for iFi = 1:2
         clear tfmat8 tfmat12      
-        mat8 = HI8{iAn, iFi}-CR{iAn, iFi};
-        mat12 = HI12{iAn, iFi}-CR{iAn, iFi};
-        [~,idx] = sort(nanmean(mat8(:,indx),2),'descend'); 
+        mat8        = HI8{iAn, iFi}-CR{iAn, iFi};
+        mat12       = HI12{iAn, iFi}-CR{iAn, iFi};
+        [~,idx]     = sort(nanmean(mat8(:,indx),2),'descend'); 
 
         if iAn == 1 && iFi == 1
             r = 4; c = 1;
@@ -342,18 +342,18 @@ noF         = 100;
 clear idxE idxD
 n = 20;
 for iCh = 1:size(lfpE.so,1)
-    mbl = mean(lfpE.so(iCh,1:250));
-    sdbl = std(lfpE.so(iCh,1:250));
-    thr = [mbl - n*sdbl mbl + n*sdbl];
+    mbl     = mean(lfpE.so(iCh,1:250));
+    sdbl    = std(lfpE.so(iCh,1:250));
+    thr     = [mbl - n*sdbl mbl + n*sdbl];
     
     [lat, idxE(iCh)]= getLatency(lfpE.so(iCh,:), 300, 300, 1, 10);
 end
 for iCh = 1:size(lfpD.so,1)
-    mbl = mean(lfpD.so(iCh,1:250));
-    sdbl = std(lfpD.so(iCh,1:250));
-    thr = [mbl - n*sdbl mbl + n*sdbl];
+    mbl     = mean(lfpD.so(iCh,1:250));
+    sdbl    = std(lfpD.so(iCh,1:250));
+    thr     = [mbl - n*sdbl mbl + n*sdbl];
     
-    [lat, idxD(iCh)]= getLatency(lfpD.so(iCh,:), 300, 300, 1, 10);
+    [lat, idxD(iCh)]    = getLatency(lfpD.so(iCh,:), 300, 300, 1, 10);
 end
 
 for iSite = 1:size(lfpE.so,1)
@@ -371,91 +371,91 @@ for iSite = 1:size(lfpD.so,1)
         continue
     end
     % Average baseline power per frequency band
-    mbl_powD      = lfpD.bl_pownorm(:,iSite);
+    mbl_powD        = lfpD.bl_pownorm(:,iSite);
     % Baseline normalisation & dB conversion
-    rcrD(:,:,iSite)  = 10*log10(lfpD.rcr_pow(:,:,iSite) ./ mbl_powD);
+    rcrD(:,:,iSite) = 10*log10(lfpD.rcr_pow(:,:,iSite) ./ mbl_powD);
 end
 
 % Average across monkeys and recording sites
-mrcr = nanmean(cat(3,rcrE,rcrD),3);
-ax = axes('Position',[clm(1) row(1) dim]);
+mrcr            = nanmean(cat(3,rcrE,rcrD),3);
+ax              = axes('Position',[clm(1) row(1) dim]);
 imagesc(flipud(mrcr))
-ax.YTick = [1 25 50 75 100];
-ax.YTickLabel = [fr(1) fr(25) fr(50) fr(75) fr(100)];
-ax.XTick = [1 1500 3000];
-ax.FontSize = 14;
+ax.YTick        = [1 25 50 75 100];
+ax.YTickLabel   = [fr(1) fr(25) fr(50) fr(75) fr(100)];
+ax.XTick        = [1 1500 3000];
+ax.FontSize     = 14;
 caxis([-1 2])
-cm = ([1 1 1; jet(256)]);
+cm              = ([1 1 1; jet(256)]);
 colormap(cm);
-cb = colorbar;
+cb              = colorbar;
 cb.Label.String = 'Power [dB]';
-cb.FontSize = 12;
-cb.Ticks = [-1 0 1 2];
+cb.FontSize     = 12;
+cb.Ticks        = [-1 0 1 2];
 xlabel('Time [ms]')
 ylabel('Freq [Hz]')
 box off
 
 % ITPC
-ax = axes('Position',[clm(2) row(1) dim]);
+ax              = axes('Position',[clm(2) row(1) dim]);
 imagesc(flipud(nanmean(cat(3,lfpE.rcr_itpc(:,:,logical(idxE)),lfpD.rcr_itpc(:,:,logical(idxD))),3)))
-ax.YTick = [1 25 50 75 100];
-ax.YTickLabel = [fr(1) fr(25) fr(50) fr(75) fr(100)];
-ax.XTick = [1 1500 3000];
-ax.FontSize = 14;
+ax.YTick        = [1 25 50 75 100];
+ax.YTickLabel   = [fr(1) fr(25) fr(50) fr(75) fr(100)];
+ax.XTick        = [1 1500 3000];
+ax.FontSize     = 14;
 ax.YAxis.Visible = 'off';
 caxis([0 .5])
-cm = ([1 1 1; jet(256)]);
+cm              = ([1 1 1; jet(256)]);
 colormap(cm);
-cb = colorbar;
+cb              = colorbar;
 cb.Label.String = 'ITPC';
-cb.FontSize = 12;
-cb.Ticks = [0 .25 .5];
+cb.FontSize     = 12;
+cb.Ticks        = [0 .25 .5];
 xlabel('Time [ms]')
 ylabel('Freq [Hz]')
 box off
 
 % Grand average - decision aligned
-ax = axes('Position',[clm(1) row(2) dim]);
-all = LFP_exclCycle(nanmean(cat(3,lfpE.zmapF(:,:,logical(idxE)),lfpD.zmapF(:,:,logical(idxD))),3), f1, f2, noF, 2);
+ax      = axes('Position',[clm(1) row(2) dim]);
+all     = LFP_exclCycle(nanmean(cat(3,lfpE.zmapF(:,:,logical(idxE)),lfpD.zmapF(:,:,logical(idxD))),3), f1, f2, noF, 2);
 imagesc(flipud(all))
-ax.YTick = [1 25 50 75 100];
-ax.YTickLabel = [fr(1) fr(25) fr(50) fr(75) fr(100)];
-ax.XTick = [100 200 300 400 500];
-ax.XTickLabel = {'-400','-300','-200','-100','0'};
-ax.FontSize = 14;
+ax.YTick            = [1 25 50 75 100];
+ax.YTickLabel       = [fr(1) fr(25) fr(50) fr(75) fr(100)];
+ax.XTick            = [100 200 300 400 500];
+ax.XTickLabel       = {'-400','-300','-200','-100','0'};
+ax.FontSize         = 14;
 caxis([-5 3])
-cm = ([1 1 1; jet(256)]);
+cm                  = ([1 1 1; jet(256)]);
 colormap(cm);
-cb = colorbar;
-cb.Label.String = 'Power difference [z-score]';
-cb.FontSize = 12;
-cb.Ticks = [-5 -2.5 0 2.5];
+cb                  = colorbar;
+cb.Label.String     = 'Power difference [z-score]';
+cb.FontSize         = 12;
+cb.Ticks            = [-5 -2.5 0 2.5];
 xlabel('Time [ms]')
 ylabel('Freq [Hz]')
 box off
 
-r = rectangle('Position',[201 1 200 70]);
+r           = rectangle('Position',[201 1 200 70]);
 r.LineWidth = 2;
 r.LineStyle = '--';
-r = rectangle('Position',[201 75 200 25]);
+r           = rectangle('Position',[201 75 200 25]);
 r.LineWidth = 2;
 r.LineStyle = '--';
 
 %%% Bar release control
-ax = axes('Position',[clm(2) row(2) dim]);
+ax              = axes('Position',[clm(2) row(2) dim]);
 load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Dollar\Summary\tfa_BR.mat')
-map = 10*log10(alltfa);
+map             = 10*log10(alltfa);
 imagesc(flipud(mean(map(:,501:1000,:),3)))
-ax.XTick = [100 200 300 400 500];
-ax.XTickLabel = {'-400', '-300','-200','-100', '0'};
-ax.FontSize = 14;
+ax.XTick        = [100 200 300 400 500];
+ax.XTickLabel   = {'-400', '-300','-200','-100', '0'};
+ax.FontSize     = 14;
 ax.YAxis.Visible = 'off';
 colormap(cm);
-cb = colorbar;
+cb              = colorbar;
 caxis([-1 1])
 cb.Label.String = 'Power [dB]';
-cb.FontSize = 12;
-cb.Ticks = [-1 -.5 0 .5 1];
+cb.FontSize     = 12;
+cb.Ticks        = [-1 -.5 0 .5 1];
 box off 
 xlabel('Time [ms]')
 
@@ -476,7 +476,7 @@ noF     = 100;
 ind = 151:350;
 dim = [.35 .2];
 row = fliplr(linspace(.04, .74, 4));
-c = 0;
+c   = 0;
 
 for iAn = 1:2
     lfp = [];
@@ -486,17 +486,17 @@ for iAn = 1:2
         load([dest_dir 'raw\tMap_' animalID '_' typ  '.mat']);
         AP      = find(logical(sum(~isnan(mfr_mat),2)));
         ML      = find(logical(sum(~isnan(mfr_mat))));
-        [x,y] = coreBoundary(mfr_mat,AP,ML,false,animalID);
-        lfp = lfpE;
-        idx = idxE;
+        [x,y]   = coreBoundary(mfr_mat,AP,ML,false,animalID);
+        lfp     = lfpE;
+        idx     = idxE;
     else
         animalID = 'Dollar';
         load([dest_dir 'raw\tMap_' animalID '_' typ  '.mat']);
         AP      = find(logical(sum(~isnan(mfr_mat),2)));
         ML      = find(logical(sum(~isnan(mfr_mat))));
-        [x,y] = coreBoundary(mfr_mat,AP,ML,false,animalID);
-        lfp = lfpD;
-        idx = idxD;
+        [x,y]  	= coreBoundary(mfr_mat,AP,ML,false,animalID);
+        lfp     = lfpD;
+        idx     = idxD;
     end
     
     % Check area
@@ -519,47 +519,47 @@ for iAn = 1:2
             continue
         end
 
-        z8(:,:,iSite) = lfp.zmap8(:,:,iSite);
+        z8(:,:,iSite)  = lfp.zmap8(:,:,iSite);
         z12(:,:,iSite) = lfp.zmap12(:,:,iSite);
     end
     
     ant8 = []; pos8 = []; ant12=[]; pos12 = [];
     
-    ant8    = z8(:,:,~post);
-    pos8    = z8(:,:,post);
-    a8      = nanmean(ant8,3);
-    p8      = nanmean(pos8,3);
+    ant8        = z8(:,:,~post);
+    pos8        = z8(:,:,post);
+    a8          = nanmean(ant8,3);
+    p8          = nanmean(pos8,3);
     
-    ant12    = z12(:,:,~post);
-    pos12    = z12(:,:,post);
-    a12      = nanmean(ant12,3);
-    p12      = nanmean(pos12,3);
+    ant12       = z12(:,:,~post);
+    pos12       = z12(:,:,post);
+    a12         = nanmean(ant12,3);
+    p12         = nanmean(pos12,3);
     
     % Remove 1/2 cycle before response to avoid artefact contribution
-    a8      = LFP_exclCycle(a8(:,1:500), f1, f2, noF, 2);
-    p8      = LFP_exclCycle(p8(:,1:500), f1, f2, noF, 2);
-    a12     = LFP_exclCycle(a12(:,1:500), f1, f2, noF, 2);
-    p12     = LFP_exclCycle(p12(:,1:500), f1, f2, noF, 2);
+    a8          = LFP_exclCycle(a8(:,1:500), f1, f2, noF, 2);
+    p8          = LFP_exclCycle(p8(:,1:500), f1, f2, noF, 2);
+    a12         = LFP_exclCycle(a12(:,1:500), f1, f2, noF, 2);
+    p12         = LFP_exclCycle(p12(:,1:500), f1, f2, noF, 2);
     
-    lA8{iAn} = ant8(1:25,:,:);
-    lP8{iAn} = pos8(1:25,:,:);
-    hA8{iAn} = ant8(30:end,:,:);
-    hP8{iAn} = pos8(30:end,:,:);
+    lA8{iAn}    = ant8(1:25,:,:);
+    lP8{iAn}    = pos8(1:25,:,:);
+    hA8{iAn}    = ant8(30:end,:,:);
+    hP8{iAn}    = pos8(30:end,:,:);
     
-    lA12{iAn} = ant12(1:25,:,:);
-    lP12{iAn} = pos12(1:25,:,:);
-    hA12{iAn} = ant12(30:end,:,:);
-    hP12{iAn} = pos12(30:end,:,:);
+    lA12{iAn}   = ant12(1:25,:,:);
+    lP12{iAn}   = pos12(1:25,:,:);
+    hA12{iAn}   = ant12(30:end,:,:);
+    hP12{iAn}   = pos12(30:end,:,:);
     
-    pga8     = LFP_exclCycle(hP8{iAn}, fr(size(hP8{iAn},1)+1), fr(1), size(hP8{iAn},1), 2);
-    pab8     = LFP_exclCycle(lP8{iAn}, fr(end), fr(100-size(lP8{iAn},1)), size(lP8{iAn},1), 2);
-    pga12     = LFP_exclCycle(hP12{iAn}, fr(size(hP12{iAn},1)+1), fr(1), size(hP12{iAn},1), 2);
-    pab12     = LFP_exclCycle(lP12{iAn}, fr(end), fr(100-size(lP12{iAn},1)), size(lP12{iAn},1), 2);
+    pga8        = LFP_exclCycle(hP8{iAn}, fr(size(hP8{iAn},1)+1), fr(1), size(hP8{iAn},1), 2);
+    pab8        = LFP_exclCycle(lP8{iAn}, fr(end), fr(100-size(lP8{iAn},1)), size(lP8{iAn},1), 2);
+    pga12       = LFP_exclCycle(hP12{iAn}, fr(size(hP12{iAn},1)+1), fr(1), size(hP12{iAn},1), 2);
+    pab12       = LFP_exclCycle(lP12{iAn}, fr(end), fr(100-size(lP12{iAn},1)), size(lP12{iAn},1), 2);
     
-    aga8     = LFP_exclCycle(hA8{iAn}, fr(size(hA8{iAn},1)+1), fr(1), size(hA8{iAn},1), 2);
-    aab8     = LFP_exclCycle(lA8{iAn}, fr(end), fr(100-size(lA8{iAn},1)), size(lA8{iAn},1), 2);
-    aga12    = LFP_exclCycle(hA12{iAn}, fr(size(hA12{iAn},1)+1), fr(1), size(hA12{iAn},1), 2);
-    aab12    = LFP_exclCycle(lA12{iAn}, fr(end), fr(100-size(lA12{iAn},1)), size(lA12{iAn},1), 2);
+    aga8        = LFP_exclCycle(hA8{iAn}, fr(size(hA8{iAn},1)+1), fr(1), size(hA8{iAn},1), 2);
+    aab8        = LFP_exclCycle(lA8{iAn}, fr(end), fr(100-size(lA8{iAn},1)), size(lA8{iAn},1), 2);
+    aga12       = LFP_exclCycle(hA12{iAn}, fr(size(hA12{iAn},1)+1), fr(1), size(hA12{iAn},1), 2);
+    aab12       = LFP_exclCycle(lA12{iAn}, fr(end), fr(100-size(lA12{iAn},1)), size(lA12{iAn},1), 2);
  
     [abAP(iAn) abAH(iAn)] = signrank(squeeze(nanmean(nanmean(aab8(:,ind,:),2))),squeeze(nanmean(nanmean(aab12(:,ind,:),2))));
     [abPP(iAn) abPH(iAn)] = signrank(squeeze(nanmean(nanmean(pab8(:,ind,:),2))),squeeze(nanmean(nanmean(pab12(:,ind,:),2))));
@@ -581,11 +581,11 @@ for iAn = 1:2
             str = 'POS';
         end
         
-        ax.XAxis.Visible = 'off';
-        ax.YLim = [-4 3];
-        ax.XLim = [.5 4.5];
-        ax.FontSize = 14;
-        ax.YLabel.String = {str; 'Z-Score'};
+        ax.XAxis.Visible    = 'off';
+        ax.YLim             = [-4 3];
+        ax.XLim             = [.5 4.5];
+        ax.FontSize         = 14;
+        ax.YLabel.String    = {str; 'Z-Score'};
         
         k = [];
         if iCond == 1
@@ -653,22 +653,22 @@ for iAn = 1:2
             sc.MarkerFaceAlpha = .6;
         end
         
-        xline = [1 2 3 4];
-        yline = 2.5;
-        ofst = .3;
-        ofs = .05;
+        xline   = [1 2 3 4];
+        yline   = 2.5;
+        ofst    = .3;
+        ofs     = .05;
         
         %         disp([id iCond])
         if iCond == 1
-            PP = [abAP(iAn) gaAP(iAn)];
+            PP  = [abAP(iAn) gaAP(iAn)];
         else
-            PP = [abPP(iAn) gaPP(iAn)];
+            PP  = [abPP(iAn) gaPP(iAn)];
         end
         PP = fdr(PP);
         
-        c = c+1;
-        PPP(c,:) = PP;
-        ctre = [1.5 3.5];
+        c           = c+1;
+        PPP(c,:)    = PP;
+        ctre        = [1.5 3.5];
         
         for pv = 1:length(PP)
             if pv == 1
@@ -693,18 +693,18 @@ for iAn = 1:2
                     xstar = ctre(pv);
                     ystar = yline+ofst;
                 end
-                star = scatter(xstar, ystar,'Marker','*', 'LineWidth', 1.2);
-                star.MarkerFaceColor = [0 0 0];
-                star.MarkerEdgeColor = [0 0 0];
-                star.SizeData = 20;
+                star                    = scatter(xstar, ystar,'Marker','*', 'LineWidth', 1.2);
+                star.MarkerFaceColor    = [0 0 0];
+                star.MarkerEdgeColor    = [0 0 0];
+                star.SizeData           = 20;
             end
         end
     end
 end
 
-ax.XAxis.Visible = 'on';
-ax.XTick = [1 2 3 4];
-ax.XTickLabel = {'Coh8', 'Coh12','Coh8', 'Coh12'};
+ax.XAxis.Visible    = 'on';
+ax.XTick            = [1 2 3 4];
+ax.XTickLabel       = {'Coh8', 'Coh12','Coh8', 'Coh12'};
 
 text(.64,.98, 'Alpha/Beta', 'Parent', ax0, 'FontSize', 20, 'Color', 'k', 'FontWeight', 'bold')
 text(.83,.98, 'Gamma', 'Parent', ax0, 'FontSize', 20,'Color', 'k', 'FontWeight', 'bold')

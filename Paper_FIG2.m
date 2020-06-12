@@ -2,7 +2,7 @@
 %%% FELIX SCHNEIDER, 02/2020 %%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% FIG 2 + FIG3 %%%%%%%%%%%%%%%%
+%%% FIG 2  %%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Eric\Summary\muae.mat')
@@ -12,9 +12,8 @@
 % clear muae
 
 %%% CONTROL %%%
-f = figure('Units', 'normalized', 'Position', [0 0 1 1]);
-set(gcf,'color', [1 1 1]);
-ax0 = axes('Position',[0 0 1 1],'Visible','off');
+f           = figure('Units', 'normalized', 'Position', [0 0 1 1]); set(gcf,'color', [1 1 1]);
+ax0         = axes('Position',[0 0 1 1],'Visible','off');
 Fs          = 1000;                                                  	% Sampling frequency
 T           = 1/Fs;                                                    	% Sampling period
 L           = 2250;                                                   	% Length of signal
@@ -22,10 +21,10 @@ t           = (0:L-1)*T;                                             	% Time vec
 frfft       = Fs*(0:(L/2))/L;
 col         = [[0 0 0]; [.65 .65 .65]];
 lw          = 1.5;
-indxR       = 201:400; % corresponds to -300:-100ms to decision
-indx        = 401:600;
+indxR       = 201:400;                                                  % corresponds to -300:-100ms to decision
+indx        = 401:600;                                                  % cooresponds to 200:400ms after figure onset
 alph        = .01;
-nRep        = 1000;                                     % No. repetitions
+nRep        = 1000;                                                     % No. repetitions
 useSEM      = true;
 
 fullCTR = []; FIG = []; CTR = []; AP = []; ML = [];
@@ -46,14 +45,14 @@ for iAn = 1:2
             continue
         end
         
-        datestr	= str2num([dd{ii}.id(1:4) dd{ii}.id(6:7) dd{ii}.id(9:10)]);
-        test = mean([dd{ii}.res.HI12(:,indxR); dd{ii}.res.HI8(:,indxR)],2);
-        ctrl = mean(dd{ii}.res.CR(:,indxR),2);
-        pp = anova1([test; ctrl],[zeros(size(test,1),1);ones(size(ctrl,1),1)], 'off');
+        datestr     = str2num([dd{ii}.id(1:4) dd{ii}.id(6:7) dd{ii}.id(9:10)]);
+        test        = mean([dd{ii}.res.HI12(:,indxR); dd{ii}.res.HI8(:,indxR)],2);
+        ctrl        = mean(dd{ii}.res.CR(:,indxR),2);
+        pp          = anova1([test; ctrl],[zeros(size(test,1),1);ones(size(ctrl,1),1)], 'off');
         
         if pp < alph && sum(dd{ii}.nTr>=10) == length(dd{ii}.nTr) && datestr - 20190806 <= 0
             %%% Norm: subtract mBL then normalise by average control activity %%%
-            mBL             = nanmean(nanmean(dd{ii}.on.fullAvg(:,101:500),2));                      % Average BL response
+            mBL       	= nanmean(nanmean(dd{ii}.on.fullAvg(:,101:500),2));                      % Average BL response
 
             c           = c+1;                                                                      % Counter
             fstim       = length(dd{ii}.figs);                                                      % Ratio of Fig to Gnd stim
@@ -74,14 +73,14 @@ for iAn = 1:2
         adj         = MLr - offset;                      	% adjusted ML value [mm]
         ap(cc)      = co(j,1);
         ml(cc)      = adj;
-        cc = cc+1;
+        cc          = cc+1;
     end
     
-    fullCTR{iAn} = fullCtrEnv;
-    FIG{iAn} = mfig;
-    CTR{iAn} = mctr;
-    AP{iAn} = ap;
-    ML{iAn} = ml;
+    fullCTR{iAn}    = fullCtrEnv;
+    FIG{iAn}        = mfig;
+    CTR{iAn}        = mctr;
+    AP{iAn}         = ap;
+    ML{iAn}         = ml;
     
     % Bootstrap significance bar
     clear diff bootstat sig
@@ -111,9 +110,10 @@ if useSEM
 else
     CI      = bootci(nRep,@mean,fullCTR{1});
 end
-l = 1:length(CI);
-len = [l fliplr(l)];
-ci = [CI(1,:) fliplr(CI(2,:))];
+
+l           = 1:length(CI);
+len         = [l fliplr(l)];
+ci          = [CI(1,:) fliplr(CI(2,:))];
 fill(len,ci,col(1,:)*0.7,'EdgeColor','none', 'FaceAlpha', .3);
 hold on
 plot(mean(fullCTR{1}), 'Color', col(1,:), 'LineWidth', lw)
@@ -127,20 +127,21 @@ if useSEM
 else
     CI      = bootci(nRep,@mean,fullCTR{2});
 end
-l = 1:length(CI);
-len = [l fliplr(l)];
-ci = [CI(1,:) fliplr(CI(2,:))];
+
+l           = 1:length(CI);
+len         = [l fliplr(l)];
+ci          = [CI(1,:) fliplr(CI(2,:))];
 fill(len,ci,col(2,:)*0.7,'EdgeColor','none', 'FaceAlpha', .3);
 hold on
 plot(mean(fullCTR{2}), 'Color', col(2,:), 'LineWidth', lw)
 
-axA.YTick = [1 1.1 1.2];
-axA.YLim = [.97 1.25];
-axA.XTick = [500 2000 3500];
-axA.XTickLabel = {'0','1500','3000'};
-axA.XLabel.String = 'Time [ms]';
-axA.YLabel.String = 'MUA [norm]';
-axA.FontSize = 14;
+axA.YTick           = [1 1.1 1.2];
+axA.YLim            = [.97 1.25];
+axA.XTick           = [500 2000 3500];
+axA.XTickLabel      = {'0','1500','3000'};
+axA.XLabel.String   = 'Time [ms]';
+axA.YLabel.String   = 'MUA [norm]';
+axA.FontSize        = 14;
 
 text(200,1.2, 'M1', 'FontSize', 12, 'Color', col(1,:), 'FontWeight', 'bold')
 text(200,1.18, 'M2', 'FontSize', 12, 'Color', col(2,:), 'FontWeight', 'bold')
@@ -150,23 +151,22 @@ line([3500 3500],[0 2], 'LineStyle', '--', 'LineWidth',lw, 'Color','k')
 axI = axes('Position',[.15 .92 .075 .05]); hold on
 plot(mean(fullCTR{1}(:,1900:2100)), 'Color', col(1,:), 'Linewidth', lw);
 plot(mean(fullCTR{2}(:,1900:2100)), 'Color', col(2,:), 'Linewidth', lw);
-axI.YLim = [1.02 1.12];
-axI.XLim = [0 200];
-axI.XTick = [0 200];
-axI.YTick = [.1 .2];
-axI.XTickLabel = {'1400','1600'};
-axI.XLabel.String = 'Time [ms]';
-axI.YAxis.Visible = 'off';
-axI.FontSize = 12;
+axI.YLim            = [1.02 1.12];
+axI.XLim            = [0 200];
+axI.XTick           = [0 200];
+axI.YTick           = [.1 .2];
+axI.XTickLabel      = {'1400','1600'};
+axI.XLabel.String   = 'Time [ms]';
+axI.YAxis.Visible   = 'off';
+axI.FontSize        = 12;
 
-of = diff(axI.YLim)*.1;
-lv = axI.YLim(2)-of;
-
-seq = [lv lv+of lv+of lv lv lv-of lv-of lv];
-ch = [0 5 45 50];
+of                  = diff(axI.YLim)*.1;
+lv                  = axI.YLim(2)-of;
+seq                 = [lv lv+of lv+of lv lv lv-of lv-of lv];
+ch                  = [0 5 45 50];
 for ic = 1:4
-    fi  = fill([ch fliplr(ch)],seq, [0 0 0], 'LineStyle','none');
-    ch = ch+50;
+    fi      = fill([ch fliplr(ch)],seq, [0 0 0], 'LineStyle','none');
+    ch      = ch+50;
 end
 
 annotation('line',[.17 .187],[.98 .98],'LineWidth', 1.5);
@@ -184,18 +184,18 @@ for k = 1:2
     end
     plot(frfft,mean(fftEnv)./ max(mean(fftEnv)), 'Color', col(k,:), 'LineWidth', lw)
     box off
-    axI2.XLim = [1 50];
-    axI2.YLim = [0 .04];
-    axI2.YTick = [];
-    axI2.YLabel.String = 'Power';
-    axI2.XLabel.String = 'Freq [Hz]';
-    axI2.FontSize = 12;
+    axI2.XLim           = [1 50];
+    axI2.YLim           = [0 .04];
+    axI2.YTick          = [];
+    axI2.YLabel.String  = 'Power';
+    axI2.XLabel.String  = 'Freq [Hz]';
+    axI2.FontSize       = 12;
 end
 
 %%% Location %%%
-dest_dir = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\raw';
-typ = 'muae';
-alp = .7;
+dest_dir    = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\raw';
+typ         = 'muae';
+alp         = .7;
 
 for iAn = 2:-1:1
     par = []; mfr_mat = []; mlat_mat = []; cc = 0;
@@ -215,41 +215,40 @@ for iAn = 2:-1:1
         sc = scatter([ML{iAn}],[-AP{iAn}]);
         axC.YLim = [-18 -5];
         axC.YLim = [-18 -5];
-        %         text(6,-20, 'Fig ~= Ctr','FontSize', 12, 'Color', [1 0 0], 'FontWeight', 'bold')
     else
         sc = scatter([ML{iAn}],[-AP{iAn}]);
         axC.YLim = [-16 -3];
     end
-    axC.YAxis.Visible = 'off';
-    axC.XAxis.Visible = 'off';
+    axC.YAxis.Visible   = 'off';
+    axC.XAxis.Visible   = 'off';
     
-    sc.SizeData = 20;
-    sc.Marker = '^';
-    sc.MarkerFaceColor = [1 0 0];
-    sc.MarkerEdgeColor = [1 0 0];
+    sc.SizeData         = 20;
+    sc.Marker           = '^';
+    sc.MarkerFaceColor  = [1 0 0];
+    sc.MarkerEdgeColor  = [1 0 0];
     
     colormap([[1 1 1]; gray(256)])
-    freqStart       = 180;                                          % Tuning low freq [Hz]
-    steps           = 14;                                           % No of desired tones
-    PT(1)           = freqStart;                                    % Starting frequency [Hz]
+    freqStart           = 180;                                          % Tuning low freq [Hz]
+    steps               = 14;                                           % No of desired tones
+    PT(1)               = freqStart;                                    % Starting frequency [Hz]
     for i = 2:steps                                                 % For no of tones...
-        PT(i)       =  PT(i-1)*2^(1/2);                             % 1/2 octave steps
+        PT(i)           =  PT(i-1)*2^(1/2);                             % 1/2 octave steps
     end
-    frex            = round(PT);
+    frex                = round(PT);
     
-    cm = gray(256);
-    axCB = axes('Position',[.37 .33 .001 .1]);
-    axCB.Visible = 'off';
+    cm                  = gray(256);
+    axCB                = axes('Position',[.37 .33 .001 .1]);
+    axCB.Visible        = 'off';
     colormap(axCB, cm)
-    cb = colorbar(axCB);
-    cb.Color = [0 0 0];
-    cb.Position(3) = .01;
-    cb.Label.String = 'Best frequency [Hz]';
-    cb.FontSize = 12;
+    cb                  = colorbar(axCB);
+    cb.Color            = [0 0 0];
+    cb.Position(3)      = .01;
+    cb.Label.String     = 'Best frequency [Hz]';
+    cb.FontSize         = 12;
     caxis([log(frex(1)) log(frex(11))])
     caxis([5 log(frex(11))])
-    cb.Ticks = [log(frex(1)),log(frex(7)),log(frex(11))];
-    cb.TickLabels = {num2str(frex(1)), num2str(frex(7)), ['>' num2str(frex(11))]};
+    cb.Ticks            = [log(frex(1)),log(frex(7)),log(frex(11))];
+    cb.TickLabels       = {num2str(frex(1)), num2str(frex(7)), ['>' num2str(frex(11))]};
 end
 
 %%% FIGURE ONSET %%%
@@ -275,9 +274,9 @@ for kk = 1:2
     else
         CI      = bootci(nRep,@mean,CTR{kk});
     end
-    l = 1:length(CI);
-    len = [l fliplr(l)];
-    ci = [CI(1,:) fliplr(CI(2,:))];
+    l           = 1:length(CI);
+    len         = [l fliplr(l)];
+    ci          = [CI(1,:) fliplr(CI(2,:))];
     fill(len,ci,col(1,:)*0.7,'EdgeColor','none', 'FaceAlpha', .3);
     hold on
     plot(mean(CTR{kk}), 'Color', col(1,:), 'LineWidth', lw)
@@ -292,19 +291,19 @@ for kk = 1:2
     else
         CI      = bootci(nRep,@mean,FIG{kk});
     end
-    l = 1:length(CI);
-    len = [l fliplr(l)];
-    ci = [CI(1,:) fliplr(CI(2,:))];
+    l           = 1:length(CI);
+    len         = [l fliplr(l)];
+    ci          = [CI(1,:) fliplr(CI(2,:))];
     fill(len,ci,col(2,:)*0.7,'EdgeColor','none', 'FaceAlpha', .3);
     hold on
     plot(mean(FIG{kk}), 'Color', col(2,:), 'LineWidth', lw)
     
-    axB.XLim = [1 600];
-    axB.XTick = [1 200 400 600];
-    axB.XTickLabel = {'-200','0','200','400'};
-    axB.XLabel.String = 'Time [ms]';
-    axB.YLabel.String = {mID{kk};'MUA [norm]'};
-    axB.FontSize = 14;
+    axB.XLim            = [1 600];
+    axB.XTick           = [1 200 400 600];
+    axB.XTickLabel      = {'-200','0','200','400'};
+    axB.XLabel.String   = 'Time [ms]';
+    axB.YLabel.String   = {mID{kk};'MUA [norm]'};
+    axB.FontSize        = 14;
     line([200 200],[-1 2], 'LineStyle', '--', 'LineWidth',lw, 'Color','k')
     
     if kk == 1
@@ -322,10 +321,10 @@ for kk = 1:2
     end
     
     seq = [lv lv+of lv+of lv lv lv-of lv-of lv];
-    ch = [0 5 45 50];
+    ch  = [0 5 45 50];
     for ic = 1:12
         fi  = fill([ch fliplr(ch)],seq, [0 0 0], 'LineStyle','none');
-        ch = ch+50;
+        ch  = ch+50;
     end
 end
 
@@ -373,10 +372,10 @@ for iAn = 1:2
                 continue
             end
             
-            datestr	= str2num([d{ii}.id(1:4) d{ii}.id(6:7) d{ii}.id(9:10)]);
-            test = mean([d{ii}.res.HI12(:,indxR); d{ii}.res.HI8(:,indxR)],2);
-            ctrl = mean(d{ii}.res.CR(:,indxR),2);
-            pp = anova1([test; ctrl],[zeros(size(test,1),1);ones(size(ctrl,1),1)], 'off');
+            datestr     = str2num([d{ii}.id(1:4) d{ii}.id(6:7) d{ii}.id(9:10)]);
+            test        = mean([d{ii}.res.HI12(:,indxR); d{ii}.res.HI8(:,indxR)],2);
+            ctrl        = mean(d{ii}.res.CR(:,indxR),2);
+            pp          = anova1([test; ctrl],[zeros(size(test,1),1);ones(size(ctrl,1),1)], 'off');
             
             if pp < alph && sum(d{ii}.nTr>=10) == length(d{ii}.nTr) && datestr - 20190806 <= 0
                 
@@ -397,30 +396,30 @@ for iAn = 1:2
                 dFG8(c)         = mean((nanmean(HIo8) - nanmean(CRo)) ./ nanstd([HIo8; CRo]));
                 dFG12(c)        = mean((nanmean(HIo12) - nanmean(CRo)) ./ nanstd([HIo12; CRo]));
             
-                latency8(c,:) = d{ii}.sigT8;
-                latency12(c,:) = d{ii}.sigT12;
+                latency8(c,:)   = d{ii}.sigT8;
+                latency12(c,:)  = d{ii}.sigT12;
                 
                 if ~isnan(sum(sum(d{ii}.RF)))
-                    cc = cc+1;
-                    no = [];
-                    no = getFreqRF(d{ii}.RF, d{ii}.figfreqs);
+                    cc  = cc+1;
+                    no  = [];
+                    no  = getFreqRF(d{ii}.RF, d{ii}.figfreqs);
                     
-                    f8 = vertcat(f8, no(1:fstim/2,:));
+                    f8  = vertcat(f8, no(1:fstim/2,:));
                     f12 = vertcat(f12, no(fstim/2+1:fstim,:));
                 end
             end
         end
         
-        mt8{iAn,iFi} = mtar8;
-        mt12{iAn,iFi} = mtar12;
-        mc{iAn,iFi} = mctr;
-        FG8{iAn,iFi} = dFG8;
-        FG12{iAn,iFi} = dFG12;
-        COH{iAn,iFi} = dCoh;
-        lat8{iAn,iFi} = latency8;
-        lat12{iAn,iFi} = latency12;
-        F8{iAn,iFi} = f8;
-        F12{iAn,iFi} = f12;
+        mt8{iAn,iFi}    = mtar8;
+        mt12{iAn,iFi}   = mtar12;
+        mc{iAn,iFi}     = mctr;
+        FG8{iAn,iFi}    = dFG8;
+        FG12{iAn,iFi}   = dFG12;
+        COH{iAn,iFi}    = dCoh;
+        lat8{iAn,iFi}   = latency8;
+        lat12{iAn,iFi}  = latency12;
+        F8{iAn,iFi}     = f8;
+        F12{iAn,iFi}    = f12;
     end
 end
 
@@ -432,16 +431,16 @@ for iAn = 1:2
     end
 end
 
-pC = fdr(pC);
-p8 = fdr(p8);
+pC  = fdr(pC);
+p8  = fdr(p8);
 p12 = fdr(p12);
 
 %% PLOT ANT vs POS %%%
 
-lw = 1.5;
-col = [0 0 0; 0 .9 0; .9 0 0];
-dist = 'sem';
-dim = [.2 .2];
+lw      = 1.5;
+col     = [0 0 0; 0 .9 0; .9 0 0];
+dist    = 'sem';
+dim     = [.2 .2];
 
 for iAn = 1:2
     for iFi = 1:2
@@ -482,13 +481,13 @@ for iAn = 1:2
         axA.XLim = [1 600];
         plotFRsumm(mt8{iAn,iFi}(:,1:600),mt12{iAn,iFi}(:,1:600),mc{iAn,iFi}(:,1:600),str, dist,animalID, 0, col)
         
-        of = diff(axA.YLim)*.04;
-        lv = axA.YLim(1)+of;
-        seq = [lv lv+of lv+of lv lv lv-of lv-of lv];
-        ch = [0 5 45 50];
+        of      = diff(axA.YLim)*.04;
+        lv      = axA.YLim(1)+of;
+        seq     = [lv lv+of lv+of lv lv lv-of lv-of lv];
+        ch      = [0 5 45 50];
         for ic = 1:12
             fi  = fill([ch fliplr(ch)],seq, [0 0 0], 'LineStyle','none');
-            ch = ch+50;
+            ch  = ch+50;
         end
         
         if iAn == 2
@@ -515,7 +514,7 @@ for iAn = 1:2
         arr = []; mat = [];
         arr = [ones(size(FG8{iAn,iFi},2),1); ones(size(FG12{iAn,iFi},2),1)+1;ones(size(COH{iAn,iFi},2),1)+2];
         mat = [FG8{iAn,iFi}';FG12{iAn,iFi}';COH{iAn,iFi}'];
-        bx = boxplot(mat, arr, 'Colors', [0 0 0]);
+        bx  = boxplot(mat, arr, 'Colors', [0 0 0]);
         set(bx(end,:),'Visible','off')
         set(bx, {'linew'},{lw})
         box off  
@@ -535,9 +534,9 @@ for iAn = 1:2
                 p = pC(iAn,iFi);
             end
             
-            x = [.8 1.8 2.8];
-            xx = x(iB) + ((x(iB)+.4)-x(iB)).*rand(1,sum(arr == iB));
-            sc = scatter(xx, mat(arr == iB)','MarkerFaceAlpha',.5,'MarkerEdgeAlpha',0);
+            x   = [.8 1.8 2.8];
+            xx  = x(iB) + ((x(iB)+.4)-x(iB)).*rand(1,sum(arr == iB));
+            sc  = scatter(xx, mat(arr == iB)','MarkerFaceAlpha',.5,'MarkerEdgeAlpha',0);
             if iB == 1
                 sc.MarkerFaceColor = [0 1 0];
                 sc.MarkerEdgeColor = [0 1 0];
@@ -582,11 +581,11 @@ for iAn = 1:2
             end
         end
         
-        axB1.XTick = [1 2 3];
-        axB1.XTickLabel = {'Coh8-Ctr', 'Coh12-Ctr', 'Coh12-Coh8'};
+        axB1.XTick              = [1 2 3];
+        axB1.XTickLabel         = {'Coh8-Ctr', 'Coh12-Ctr', 'Coh12-Coh8'};
         axB1.XTickLabelRotation = 10;
-        axB1.FontSize = 14;
-        axB1.YLim = [-.3 .7];
+        axB1.FontSize           = 14;
+        axB1.YLim               = [-.3 .7];
  
     end
 end
