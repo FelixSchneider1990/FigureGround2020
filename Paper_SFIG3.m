@@ -2,9 +2,11 @@
 % addpath \\campus\rdw\ion02\02\auditory\Felix\Documents\Publications\FigGnd_Ephys\Figures
 % load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Eric\2018-10-09_10-04-30\Data\DataStruct_2018-10-09.mat')    
 % cd Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Eric\2018-10-09_10-04-30
+% load('/Volumes/Felix_ExtDrive/Rec/Eric/2018-10-09_10-04-30/Data/DataStruct_2018-10-09.mat')
+% cd /Volumes/Felix_ExtDrive/Rec/Eric/2018-10-09_10-04-30
 
 chan        = 'ch2';
-clus        = 'clus2';
+clus        = 'clus1';
 % data.(chan).Spks      = getSpikesSU(data, str2num(chan(end)));           % Import spike file
 stID        = data.behaviour.stimID;
 s           = data.behaviour.stimNrPool;
@@ -18,9 +20,9 @@ bl          = 0;
 % bl          = mean(avgSFG(101:500));
 % nV          = max(avgSFG(500:700)) - bl;
 
-avgSFGenv      = nanmean(data.(chan).MUAe.SFG.sig);
-blE           = 0;
-nVE           = mean(avgSFGenv(101:500));
+avgSFGenv  	= nanmean(data.(chan).MUAe.SFG.sig);
+blE       	= 0;
+nVE        	= mean(avgSFGenv(101:500));
 % blE           = mean(avgSFGenv(101:500));
 % nVE           = max(avgSFGenv(500:700)) - blE;
 
@@ -28,7 +30,7 @@ figs        = data.stimSpecs.fig;
 frMat       = data.stimSpecs.freq_mat;
 cm          = [[0 0 0]; [0 .9 0]; [.9 0 0]];
 
-f = figure('Units', 'normalized', 'Position', [0 0 1 1]);
+f = figure('Units', 'normalized', 'Position', [0 0 .8 1]);
 set(gcf,'color', [1 1 1]);
 axis off
 ax0 = axes('Position',[0 0 1 1],'Visible','off');
@@ -115,15 +117,15 @@ for iSt = 1:length(stID)*.6
         plot(mFIGe, 'Color', [.5 .5 .5], 'LineWidth', 2, 'LineStyle', '-');
         axF.YTick = [0 1 2];
         axF.YLim = [.5 2.5];
-        axF.YLabel.String = 'MUAe amplitude [norm]';
+        axF.YLabel.String = 'MUA envelope [norm]';
         axF.YAxis(1).Color = [.5 .5 .5];
 
         yyaxis right
         fi1 = fill([1:600 600:-1:1],[mFIG+semFIG/2 fliplr(mFIG-semFIG/2)], [0 0 0], 'LineStyle','none');
         fi1.FaceAlpha = .3;
         plot(mFIG, 'Color', [0 0 0], 'LineWidth', 2, 'LineStyle', '-');
-        axF.YTick = [0 5 10 15 20];
-        axF.YLim = [-1 25];
+        axF.YTick = [0 5 10];
+        axF.YLim = [-1 10];
         axF.YAxis(2).Color = [0 0 0];
 
         axF.YLabel.String = 'Firing Rate [norm]';
@@ -132,14 +134,14 @@ for iSt = 1:length(stID)*.6
         axF.XTickLabel = {- 200 0 200 400};
         axF.XColor = [0 0 0];
         axF.FontSize = 14;
-        axF.YAxis(1).Label.FontSize = 10;
-        axF.YAxis(2).Label.FontSize = 10;
+        axF.YAxis(1).Label.FontSize = 14;
+        axF.YAxis(2).Label.FontSize = 14;
         box off
         l = line([200 200],[-2 axF.YLim(2)]);
         l.Color = cm(2,:);
         l.LineStyle = '--';
         l.LineWidth = 2;
-        tt = text(45,axF.YLim(2)*.9,'Coh8', 'Parent', axF, 'FontSize', 12, 'Color', cm(2,:));
+        tt = text(45,axF.YLim(2)*.9,'Coh8', 'Parent', axF, 'FontSize', 14, 'Color', cm(2,:));
         
         if iSt ~= 1
             axRF.YAxis.Visible = 'off';
@@ -202,7 +204,7 @@ for iSt = 1:length(stID)*.6
         fi1.FaceAlpha = .3;
         plot(mFIG, 'Color', [0 0 0], 'LineWidth', 2, 'LineStyle', '-');
         axF.YTick = [0 5 10];
-        axF.YLim = [-1 25];
+        axF.YLim = [-1 10];
         
         axF.XLim = [1 600];
         axF.XTick = [1 200 400 600];
@@ -214,7 +216,7 @@ for iSt = 1:length(stID)*.6
         l.Color = cm(3,:);
         l.LineStyle = '--';
         l.LineWidth = 2;
-        tt = text(40,axF.YLim(2)*.9,'Coh12', 'Parent', axF, 'FontSize', 12, 'Color', cm(3,:));
+        tt = text(40,axF.YLim(2)*.9,'Coh12', 'Parent', axF, 'FontSize', 14, 'Color', cm(3,:));
         
         axRF.YAxis.Visible = 'off';
         axF.YAxis(1).Visible = 'off';
@@ -231,6 +233,7 @@ L           = 2750;                                                   	% Length 
 t           = (0:L-1)*T;                                             	% Time vector
 frfft       = Fs*(0:(L/2))/L;                                           % Frequency vector
 y               = fft(mean(data.(chan).Spks.(clus).SFG.alig.on.fullAvg(:,751:3500)));                        % One-sided fast Fourier transform for signal and BL
+% y               = fft(mean(data.(chan).MUAe.SFG.alig.on.fullAvg(:,751:3500)));                        % One-sided fast Fourier transform for signal and BL
 P2              = abs(y/L);
 P1              = P2(1:L/2+1);
 P1(2:end-1)     = 2*P1(2:end-1);
@@ -271,14 +274,14 @@ axB.XTick = [1 2 3];
 axB.XTickLabel = {'Control', 'Coh8', 'Coh12'};
 xtickangle(20)
 axB.XLim = [0 4];
-axB.YLim = [0 10];
-axB.YTick = [0 5 10];
+axB.YLim = [0 5.5];
+axB.YTick = [0 2.5 5];
 axB.XColor = [0 0 0];
 axB.YColor = [0 0 0];
 axB.FontSize = 14;
-axB.Title.String = 'SU';
+axB.Title.String = 'Threshold';
 axB.YLabel.String = 'FR [norm]';
-axB.XAxis.FontSize = 12;
+axB.XAxis.FontSize = 14;
 box off
 
 axBB = axes('Position',[row(1)+.31 .05 .12 .2]);
@@ -299,14 +302,14 @@ sc3.MarkerEdgeColor = cm(3,:);
 axBB.XTickLabel = {'Control', 'Coh8', 'Coh12'};
 xtickangle(20)
 axBB.XTick = [1 2 3];
-axBB.YLim = [.8 1.5];
+axBB.YLim = [.9 1.5];
 axBB.XLim = [0 4];
 axBB.YTick = [1 1.5];
 axBB.XColor = [0 0 0];
 axBB.YColor = [0 0 0];
 axBB.FontSize = 14;
-axBB.Title.String = 'MUAe';
-axBB.XAxis.FontSize = 12;
+axBB.Title.String = 'Envelope';
+axBB.XAxis.FontSize = 14;
 % axBB.YAxis.Visible = 'off';
 box off
 
@@ -334,7 +337,7 @@ axRF.XTick = [1 7 14];
 axRF.XTickLabel = {'180', '1440', '16292'};
 axRF.YLim = [-.2 1];
 axRF.YTick = [0 .5 1];
-axRF.YLabel.String = 'MUAe amplitude [norm]';
+axRF.YLabel.String = 'MUA [norm]';
 axRF.XLabel.String = 'Frequency [Hz]';
 axRF.XColor = [0 0 0];
 axRF.YColor = [0 0 0];
@@ -403,7 +406,11 @@ text(0.20,.3, 'c', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'b
 text(.49,.3, 'd', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 text(.74,.3, 'e', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 
-addpath X:\Felix\Scripts\Stuff\export_fig-master
-dest_dir = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\';
-export_fig([dest_dir 'SFIG_SU'], '-r385',f);
-print([dest_dir 'SFIG_SU'], '-dpng', '-r400')
+% addpath X:\Felix\Scripts\Stuff\export_fig-master
+% dest_dir = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\';
+% export_fig([dest_dir 'SFIG_SU'], '-r385',f);
+% print([dest_dir 'SFIG_SU'], '-dpng', '-r400')
+
+addpath /Users/fschneider/Documents/MATLAB/altmany-export_fig-8b0ba13
+dest_dir = '/Users/fschneider/ownCloud/NCL_revision/Figures/';
+export_fig([dest_dir 'SFIG_SU'], '-r400',f);

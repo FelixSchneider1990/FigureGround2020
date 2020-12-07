@@ -4,9 +4,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% FIG 1 %%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+addpath /Volumes/Felix_ExtDrive/Felix/Scripts/Stuff
 clearvars -except muaeD muaeE data lfpD lfpE
-f       = figure('Units', 'normalized', 'Position', [0 0 1 1]); set(gcf,'color', [1 1 1]);
+f       = figure('Units', 'normalized', 'Position', [0 0 .8 1]); set(gcf,'color', [1 1 1]);
 ax0  	= axes('Position',[0 0 1 1],'Visible','off');
 col     = [0 .9 0; .9 0 0; 0 .9 0; .9 0 0];
 
@@ -15,7 +15,9 @@ clm     = linspace(.1,.76,4);
 dim     = [.15 .2];
 
 %%% SFG stim %%%
-load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Dollar\2019-05-20_12-01-40\Data\DataStruct_2019-05-20.mat')
+% load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Dollar\2019-05-20_12-01-40\Data\DataStruct_2019-05-20.mat')
+load('/Volumes/Felix_ExtDrive/Rec/Dollar/2019-05-20_12-01-40/Data/DataStruct_2019-05-20.mat')
+
 freqMat             = data.stimSpecs.freq_mat;
 axA                 = axes('Position',[row(1) clm(4) dim]); hold on
 no                  = 4;
@@ -77,19 +79,21 @@ text(2100,4.5, 'FA', 'FontSize', 10, 'Color', [.3 .3 .3])
 axP.Position(1)     = row(2);
 axP.Position(3:4)   = [.15 .1];
 
+% bdir = 'Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Eric\Summary\';
+bdir = '/Volumes/Felix_ExtDrive/Rec/';
 
 %%% Behaviour %%%
-load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Eric\Summary\dprime.mat')
+load([bdir 'Eric/Summary/dprime.mat'])
 dpE     = dp;
-load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Dollar\Summary\dprime.mat')
+load([bdir 'Dollar/Summary/dprime.mat'])
 dpD     = dp;
-load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Eric\Summary\mRT.mat')
+load([bdir 'Eric/Summary/mRT.mat'])
 mRTE    = mRT;
-load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Dollar\Summary\mRT.mat')
+load([bdir 'Dollar/Summary/mRT.mat'])
 mRTD    = mRT;
-load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Eric\Summary\RTsd.mat')
+load([bdir 'Eric/Summary/RTsd.mat'])
 sdRTE   = RTsd;
-load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Dollar\Summary\RTsd')
+load([bdir 'Dollar/Summary/RTsd.mat'])
 sdRTD   = RTsd;
 
 of      = 0.009;
@@ -113,6 +117,7 @@ set(bx, {'linew'},{lw})
 axB.YLabel.String   = 'd prime';
 axB.YLim            = [-.2 5.2];
 axB.XTick           = [1 2 3 4];
+axB.YTick           = [0 1 2 3 4 5];
 axB.XTickLabel      = {'Coh8' 'Coh12' 'Coh8' 'Coh12'};
 axB.XColor          = [0 0 0];
 axB.YColor          = [0 0 0];
@@ -325,8 +330,11 @@ end
 %%% FIG 1b %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BF + Latency + Phase locking maps
+% ADD ARROW: arrow('Start',[0 0 0],'Stop',[1 0 0],'BaseAngle',90,'TipAngle',20,'Width',20,'Length',50)
 
-dest_dir = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\';
+
+% dest_dir = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\';
+dest_dir = '/Users/fschneider/ownCloud/NCL_revision/Figures/';
 
 % Frequency pool
 freq_pool       = 440 * 2 .^((-31:97)/24);                      % SFG frequency pool
@@ -359,7 +367,8 @@ if import == 0
             angle   = 15;
         end
         
-        path    = ['Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\' animalID '\'];
+        %         path    = ['Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\' animalID '\'];
+        path    = ['/Volumes/Felix_ExtDrive/Rec/' animalID '/'];
         fr_mat  = nan(18);
         lat_mat = nan(18);
         
@@ -385,7 +394,8 @@ if import == 0
                         continue
                     end
                     
-                    source              = [path rec.fname '\Data\var\'];
+                    %                     source              = [path rec.fname '\Data\var\'];
+                    source              = [path rec.fname '/Data/var/'];
                     
                     if flag == 1
                         typ             = 'spks';
@@ -403,6 +413,7 @@ if import == 0
                         mmFR        = nanmean(mFR);
                         
                         if isnan(sum(mmFR)) || sum(sum(mmFR)) == 0
+                            disp(['BF ' num2str(se) '-' num2str(r) '-' chan])
                             continue
                         end
                         
@@ -425,6 +436,7 @@ if import == 0
                         end
                         
                         if sum(sum(isnan(pk))) == sz*3
+                            disp(['CONTINUE ' num2str(se) '-' num2str(r) '-' chan])
                             continue
                         end
                         
@@ -442,32 +454,41 @@ if import == 0
                         %                         onLat    	= nanmean(ons);
                         pkLat    	= nanmean(pk(:,bf));
                         
+                        if isnan(pkLat)
+                            disp(['nanLAT ' num2str(se) '-' num2str(r) '-' chan])
+                        elseif isnan(BF)
+                            disp(['nanBF ' num2str(se) '-' num2str(r) '-' chan])
+                        end
+                        
                         matFR       = nan(18);
                         matLat      = nan(18);
                         
-                        x           = round(coord(1));
-                        y           = round(coord(2));
+                        xxx           = round(coord(1));
+                        yyy           = round(coord(2));
                         
-                        matFR(x, y)	= log(BF);
-                        %                         matLat(x, y)= onLat;
-                        matLat(x, y)= pkLat;
+%                         % Get corrected coordinates
+%                         pen         = rec.(chan).coord(2);                              % ML penetration site on grid [mm]
+%                         dep         = rec.(chan).coord(3);                              % depth of recording from GT tip [mm]
+%                         offset      = (dep/sind(90)) * sind(angle);                     % calculate offset [mm]
+%                         adj         = pen - offset;                                     % adjusted ML value [mm]
+%                         xx          = rec.(chan).coord(1);
+%                         yy          = adj;
+%                         
+%                         xxx           = round(xx);
+%                         yyy           = round(yy);
                         
+                        matFR(xxx, yyy)	= log(BF);
+                        matLat(xxx, yyy)= pkLat;
+                        % matLat(x, y)= onLat;
+
                         % Update matrix
                         fr_mat    	= cat(3, fr_mat, matFR);
                         lat_mat  	= cat(3, lat_mat, matLat);
-                        
-                        % Get corrected coordinates
-                        pen         = rec.(chan).coord(2);                              % ML penetration site on grid [mm]
-                        dep         = rec.(chan).coord(3);                              % depth of recording from GT tip [mm]
-                        offset      = (dep/sind(90)) * sind(angle);                     % calculate offset [mm]
-                        adj         = pen - offset;                                     % adjusted ML value [mm]
-                        xx          = rec.(chan).coord(1);
-                        yy          = adj;
-                        
+  
                         cc          = cc+1;
                         bfmat(cc)   = find(ff == max(ff));
                         latmat(cc)  = pkLat;
-                        ccoord(cc,:)= [xx,yy];
+                        ccoord(cc,:)= [xxx,yyy];
                         
                         incl     	= incl + 1;
                         all      	= all + 1;
@@ -488,11 +509,17 @@ if import == 0
         mfr_mat     = nanconv(mfr_mat,imageFilter, 'nanout');
         mlat_mat    = nanconv(mlat_mat,imageFilter, 'nanout');
         
-        save([dest_dir 'raw\tMap_' animalID '_' typ '.mat'], 'mfr_mat');
-        save([dest_dir 'raw\lMap_' animalID '_' typ  '.mat'], 'mlat_mat');
-        save([dest_dir 'raw\ccoord_' animalID '_' typ  '.mat'], 'ccoord');
-        save([dest_dir 'raw\bf_' animalID '_' typ  '.mat'], 'bfmat');
-        save([dest_dir 'raw\lat_' animalID '_' typ  '.mat'], 'latmat');
+        %         save([dest_dir 'raw\tMap_' animalID '_' typ '.mat'], 'mfr_mat');
+        %         save([dest_dir 'raw\lMap_' animalID '_' typ  '.mat'], 'mlat_mat');
+        %         save([dest_dir 'raw\ccoord_' animalID '_' typ  '.mat'], 'ccoord');
+        %         save([dest_dir 'raw\bf_' animalID '_' typ  '.mat'], 'bfmat');
+        %         save([dest_dir 'raw\lat_' animalID '_' typ  '.mat'], 'latmat');
+        
+        save(['/Users/fschneider/ownCloud/NCL_revision/Figures/raw/tMap_' animalID '_' typ '.mat'], 'mfr_mat');
+        save(['/Users/fschneider/ownCloud/NCL_revision/Figures/raw/lMap_' animalID '_' typ  '.mat'], 'mlat_mat');
+        save(['/Users/fschneider/ownCloud/NCL_revision/Figures/raw/ccoord_' animalID '_' typ  '.mat'], 'ccoord');
+        save(['/Users/fschneider/ownCloud/NCL_revision/Figures/raw/bf_' animalID '_' typ  '.mat'], 'bfmat');
+        save(['/Users/fschneider/ownCloud/NCL_revision/Figures/raw/lat_' animalID '_' typ  '.mat'], 'latmat');
     end
 end
 
@@ -512,11 +539,17 @@ for iAn = 1:2
         animalID = 'Dollar';
     end
     
-    load([dest_dir 'raw\tMap_' animalID '_' typ  '.mat']);
-    load([dest_dir 'raw\lMap_' animalID '_' typ  '.mat']);
-    load([dest_dir 'raw\ccoord_' animalID '_' typ  '.mat']);
-    load([dest_dir 'raw\bf_' animalID '_' typ  '.mat']);
-    load([dest_dir 'raw\lat_' animalID '_' typ  '.mat']);
+    %     load([dest_dir 'raw\tMap_' animalID '_' typ  '.mat']);
+    %     load([dest_dir 'raw\lMap_' animalID '_' typ  '.mat']);
+    %     load([dest_dir 'raw\ccoord_' animalID '_' typ  '.mat']);
+    %     load([dest_dir 'raw\bf_' animalID '_' typ  '.mat']);
+    %     load([dest_dir 'raw\lat_' animalID '_' typ  '.mat']);
+    
+    load(['/Users/fschneider/ownCloud/NCL_revision/Figures/raw/tMap_' animalID '_' typ '.mat']);
+    load(['/Users/fschneider/ownCloud/NCL_revision/Figures/raw/lMap_' animalID '_' typ  '.mat']);
+    load(['/Users/fschneider/ownCloud/NCL_revision/Figures/raw/ccoord_' animalID '_' typ  '.mat']);
+    load(['/Users/fschneider/ownCloud/NCL_revision/Figures/raw/bf_' animalID '_' typ  '.mat']);
+    load(['/Users/fschneider/ownCloud/NCL_revision/Figures/raw/lat_' animalID '_' typ  '.mat']);
     
     AP      = find(logical(sum(~isnan(mfr_mat),2)));                                           % Boundaries of recording field
     ML      = find(logical(sum(~isnan(mfr_mat))));
@@ -553,6 +586,7 @@ for iAn = 1:2
         imagesc(1:size(mfr_mat,1),-18:-1, flipud(mfr_mat));
         plot(x,-y, 'Color', [0 0 0],'LineWidth', 4)
         axT1.YLim = [-18 -5];
+        caxis([floor(log(frex(1))) ceil(log(frex(11)))])
         
         %%% Latency %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         axL1 = axes('Position',[row(4)+of clm(2) dim]); hold on; axis equal
@@ -561,6 +595,7 @@ for iAn = 1:2
         plot(x,-y, 'Color', [0 0 0],'LineWidth', 4)
         axL1.YLim = [-18 -5];
         axPL.YAxis.Visible = 'off';
+        caxis([15 80])
         
     else
         
@@ -570,6 +605,7 @@ for iAn = 1:2
         hold on
         plot(x,-y, 'Color', [0 0 0],'LineWidth', 4)
         axT1.YLim = [-17 -4];
+        caxis([floor(log(frex(1))) ceil(log(frex(11)))])
         
         %%% Latency %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         axL1 = axes('Position',[row(4)+of clm(1) dim]); hold on; axis equal
@@ -578,6 +614,7 @@ for iAn = 1:2
         plot(x,-y, 'Color', [0 0 0],'LineWidth', 4)
         axL1.YLim = [-17 -4];
         axPL.YAxis.Visible = 'off';
+        caxis([15 80])
         
         %%% Phase-lock %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %         load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Dollar\Summary\muae.mat')
@@ -592,8 +629,13 @@ for iAn = 1:2
         %         save([dest_dir 'raw\PL_id_' animalID '_' typ  '.mat'], 'pL');
         %         save([dest_dir 'raw\PL_co_' animalID '_' typ  '.mat'], 'co');
         
-        load('X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\raw\PL_co_Dollar_muae.mat')
-        load('X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\raw\PL_id_Dollar_muae.mat')
+        %         load('X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\raw\PL_co_Dollar_muae.mat')
+        %         load('X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\raw\PL_id_Dollar_muae.mat')
+        
+        load('/Volumes/Felix_ExtDrive/Felix/Documents/Publications/FigGnd_Ephys/Figures/raw/PL_co_Dollar_muae.mat')
+        load('/Volumes/Felix_ExtDrive/Felix/Documents/Publications/FigGnd_Ephys/Figures/raw/PL_id_Dollar_muae.mat')
+        
+        
         c = 1;
         for i = 1:size(co,1)
             MLr      	= co(i,2);                              % ML penetration site on grid [mm]
@@ -640,47 +682,13 @@ for iAn = 1:2
         axL1.XTick = xax;
     end
     
-    axCB = axes('Position',[row(5)+.015 clm(2)+.05 .001 .1]);
-    axCB.Visible = 'off';
-    colormap(axCB, cm)
-    cb = colorbar(axCB);
-    cb.Color = [0 0 0];
-    cb.Position(3) = .01;
-    cb.Label.String = 'Best frequency [Hz]';
-    cb.FontSize = 12;
-    caxis([log(frex(1)) log(frex(11))])
-    caxis([5 log(frex(11))])
-    cb.Ticks = [log(frex(1)),log(frex(7)),log(frex(11))];
-    cb.TickLabels = {num2str(frex(1)), num2str(frex(7)), ['>' num2str(frex(11))]};
-    
-    cm              = [back; gray(256)];
-    axCB            = axes('Position',[row(5) clm(2)+.05 .001 .1]);
-    axCB.Visible    = 'off';
-    colormap(axCB, cm)
-    cb              = colorbar(axCB);
-    cb.Color        = [0 0 0];
-    cb.Position(3)  = .01;
-    cb.Ticks        = [];
-    
     axL1.YTick      = yax;
     axL1.YTickLabel = ytick;
     axL1.FontSize   = 14;
     axL1.YAxis.Visible = 'off';
     cm              = [back; lcmap];
     colormap(axL1, cm)
-    
-    axCB                = axes('Position',[row(5)+.09 clm(2)+.05 .001 .1]);
-    axCB.Visible        = 'off';
-    colormap(axCB, lcmap)
-    cb                  = colorbar(axCB);
-    cb.Color            = [0 0 0];
-    cb.Position(3)      = .01;
-    cb.Label.String     = 'Latency [ms]';
-    cb.FontSize         = 12;
-    caxis([20 80])
-    cb.Ticks            = [20 50 80];
-    cb.TickLabels       = {'20' '40' '>80'};
-    
+
     if iAn == 2
         axPL.YTick      = yax;
         axPL.YTickLabel = ytick;
@@ -691,12 +699,49 @@ for iAn = 1:2
         axPL.YAxis.Visible = 'off';
         cm = [back; gray(256)];
         colormap(axPL, cm)
+        caxis([floor(log(frex(1))) ceil(log(frex(11)))])
         
         axT1.XLabel.String = 'Grid position ML [mm]';
         axL1.XLabel.String = 'Grid position ML [mm]';
         
     end
 end
+
+cm = [back; flipud(jet(256))];
+colormap(axT1, cm)
+axCB = axes('Position',[row(5)+.025 clm(2)+.05 .001 .1]);
+axCB.Visible = 'off';
+colormap(axCB, cm)
+cb = colorbar(axCB);
+cb.Color = [0 0 0];
+cb.Position(3) = .01;
+cb.Label.String = 'Best frequency [Hz]';
+cb.FontSize = 12;
+caxis([floor(log(frex(1))) ceil(log(frex(11)))])
+cb.Ticks = [log(frex(1)),log(frex(7)),log(frex(11))];
+cb.TickLabels = {num2str(frex(1)), num2str(frex(7)), ['>' num2str(frex(11))]};
+
+cm              = [back; gray(256)];
+axCB            = axes('Position',[row(5)+.01 clm(2)+.05 .001 .1]);
+axCB.Visible    = 'off';
+colormap(axCB, cm)
+cb              = colorbar(axCB);
+cb.Color        = [0 0 0];
+cb.Position(3)  = .01;
+cb.Ticks        = [];
+
+axCB                = axes('Position',[row(5)+.1 clm(2)+.05 .001 .1]);
+axCB.Visible        = 'off';
+colormap(axCB, lcmap)
+cb                  = colorbar(axCB);
+cb.Color            = [0 0 0];
+cb.Position(3)      = .01;
+cb.Label.String     = 'Latency [ms]';
+cb.FontSize         = 12;
+caxis([15 80])
+cb.Ticks            = [15 48 80];
+cb.TickLabels       = {'15' '48' '>80'};
+
 
 offset = 0.03;
 text(0,.98, 'a', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
@@ -709,11 +754,12 @@ text(row(3)-offset,.54, 'g', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontW
 text(row(4)-offset,.54, 'h', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 text(row(5)-offset,.32, 'i', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 
-text(row(3)+.05,.54, 'Tonotopy', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
-text(row(4)+.04,.54, 'Peak Latency', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
-text(row(5)+.04,.32, 'Phase Locking', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
+text(row(3)+.06,.54, 'Tonotopy', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
+text(row(4)+.05,.54, 'Peak Latency', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
+text(row(5)+.06,.32, 'Phase Locking', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
 
-addpath X:\Felix\Scripts\Stuff\export_fig-master
+% addpath X:\Felix\Scripts\Stuff\export_fig-master
+% addpath /Users/fschneider/Documents/MATLAB/altmany-export_fig-8b0ba13
 % export_fig([dest_dir 'FIG1'], '-r400',f);
 
 %% SFIG Raw BF %%%%

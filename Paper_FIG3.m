@@ -12,7 +12,8 @@
 % clear muae
 
 typ         = 'muae';
-dest_dir    = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\';
+% dest_dir    = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\';
+dest_dir    = '/Users/fschneider/ownCloud/NCL_revision/Figures/';
 indx        = 401:600; % corresponds to 201-400ms after onset
 indxR       = 201:400; % corresponds to -300 - -100ms prior decision (HI) / End of figure (MI)
 alph        = .01;
@@ -24,7 +25,7 @@ for iAn = 1:2
     
     if iAn == 1
         animalID = 'Eric';
-        load([dest_dir 'raw\tMap_' animalID '_' typ  '.mat']);
+        load([dest_dir 'raw/tMap_' animalID '_' typ  '.mat']);
         AP      = find(logical(sum(~isnan(mfr_mat),2)));
         ML      = find(logical(sum(~isnan(mfr_mat))));
         [x,y] = coreBoundary(mfr_mat,AP,ML,false,animalID);
@@ -32,7 +33,7 @@ for iAn = 1:2
         
     elseif iAn == 2
         animalID = 'Dollar';
-        load([dest_dir 'raw\tMap_' animalID '_' typ  '.mat']);
+        load([dest_dir 'raw/tMap_' animalID '_' typ  '.mat']);
         AP      = find(logical(sum(~isnan(mfr_mat),2)));
         ML      = find(logical(sum(~isnan(mfr_mat))));
         [x,y] = coreBoundary(mfr_mat,AP,ML,false,animalID);
@@ -82,7 +83,7 @@ for iAn = 1:2
             ctrl        = mean(d{ii}.res.CR(:,indxR),2);
             pp          = anova1([test; ctrl],[zeros(size(test,1),1);ones(size(ctrl,1),1)], 'off');
 %             [h,pp]= ttest2(test,ctrl)
-
+        
             if pp < alph
                 in(ii)  = true;
             else
@@ -93,8 +94,8 @@ for iAn = 1:2
             mBL         = nanmean(nanmean(d{ii}.on.fullAvg(:,101:500),2));        	% Average BL response   
             
             FIGo     	= d{ii}.on.trlOn(d{ii}.on.cat == 3 | d{ii}.on.cat == 4,indx) ./mBL;
-            HIo8      	= d{ii}.on.trlOn(d{ii}.on.cat == 3 & d{ii}.on.coh == 8,indx) ./mBL;
-            HIo12    	= d{ii}.on.trlOn(d{ii}.on.cat == 3 & d{ii}.on.coh == 12,indx) ./mBL;
+            HIo8      	= d{ii}.on.trlOn((d{ii}.on.cat == 3 | d{ii}.on.cat == 4) & d{ii}.on.coh == 8,indx) ./mBL;
+            HIo12    	= d{ii}.on.trlOn((d{ii}.on.cat == 3 | d{ii}.on.cat == 4) & d{ii}.on.coh == 12,indx) ./mBL;
             CRo        	= d{ii}.on.trlOn(d{ii}.on.cat == 6,indx) ./mBL;
             
             if sum(d{ii}.on.cat == 4) >= nMI
@@ -114,7 +115,7 @@ for iAn = 1:2
             end
             FIGd     	= [HId12; HId8; MId];
             
-            %%% dAB = (mA–mB)/s, where mA and mB are the mean responses in stimulus
+            %%% dAB = (mAï¿½mB)/s, where mA and mB are the mean responses in stimulus
             %%% conditions A and B, and s is the pooled standard deviation.
             %%% Poort et al. (2016) Cereb Cortex
             dFGo(ii)   	= mean((nanmean(FIGo) - nanmean(CRo)) ./ nanstd([FIGo; CRo]));
@@ -502,9 +503,9 @@ text(clm(2)+.025, .985, 'Coh8 vs Coh12', 'Parent', ax0, 'FontSize', 14, 'Color',
 text(clm(3)+of, .985, 'HI vs MI', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
 text(clm(4)+of, .985, 'MI vs CR', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
 
-addpath X:\Felix\Scripts\Stuff\export_fig-master
-dest_dir = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\';
-export_fig([dest_dir 'FIG5_dprime'], '-r400',f);
+% addpath X:\Felix\Scripts\Stuff\export_fig-master
+% dest_dir = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\';
+% export_fig([dest_dir 'FIG_dprime'], '-r400',f);
 
 %%% POOL AC %%%
 for iAn = 1:2
@@ -815,7 +816,7 @@ text(clm(2)+.025, .985, 'Coh8 vs Coh12', 'Parent', ax0, 'FontSize', 14, 'Color',
 text(clm(3)+of, .985, 'HI vs MI', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
 text(clm(4)+of, .985, 'MI vs CR', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
 
-export_fig([dest_dir 'FIG5_dprime_pooled'], '-r400',f);
+% export_fig([dest_dir 'FIG5_dprime_pooled'], '-r400',f);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1158,9 +1159,9 @@ text(clm(2)+of, .985, 'Coh8 vs Coh12', 'Parent', ax0, 'FontSize', 14, 'Color', '
 text(clm(3)+of, .985, 'HI vs MI', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
 text(clm(4)+of, .985, 'MI vs CR', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
 
-addpath X:\Felix\Scripts\Stuff\export_fig-master
-dest_dir = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\';
-export_fig([dest_dir 'FIG5_roc'], '-r400',f);
+% addpath X:\Felix\Scripts\Stuff\export_fig-master
+% dest_dir = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\';
+% export_fig([dest_dir 'FIG5_roc'], '-r400',f);
 
 %%% POOL AC %%%
 for iAn = 1:2
@@ -1464,7 +1465,277 @@ text(clm(2)+of, .985, 'Coh8 vs Coh12', 'Parent', ax0, 'FontSize', 14, 'Color', '
 text(clm(3)+of, .985, 'HI vs MI', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
 text(clm(4)+of, .985, 'MI vs CR', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
 
-export_fig([dest_dir 'FIG5_roc_pooled'], '-r400',f);
+% export_fig([dest_dir 'FIG5_roc_pooled'], '-r400',f);
+
+%%
+%%% POOL AC %%%
+    allIN_pop               = [IN{1,1} IN{1,2} IN{2,1} IN{2,2}];
+    allAUCFD_pop            = [AUCFD{1,1} AUCFD{1,2} AUCFD{2,1} AUCFD{2,2}];
+    allAUCFO_pop            = [AUCFO{1,1} AUCFO{1,2} AUCFO{2,1} AUCFO{2,2}];
+    allAUCC_pop             = [AUCC{1,1} AUCC{1,2} AUCC{2,1} AUCC{2,2}];
+    allAUCCD_pop            = [AUCCD{1,1} AUCCD{1,2} AUCCD{2,1} AUCCD{2,2}];
+    allAUCHM_pop            = [AUCHM{1,1} AUCHM{1,2} AUCHM{2,1} AUCHM{2,2}];
+    allAUCMC_pop            = [AUCMC{1,1} AUCMC{1,2} AUCMC{2,1} AUCMC{2,2}];
+    allAUCHMD_pop           = [AUCHMD{1,1} AUCHMD{1,2} AUCHMD{2,1} AUCHMD{2,2}];
+    allAUCMCD_pop           = [AUCMCD{1,1} AUCMCD{1,2} AUCMCD{2,1} AUCMCD{2,2}];
+    
+    inclIdx                 = allIN_pop;    % Only sound-responsive units with sign. FGM
+    PFd                     = signrank(allAUCFD_pop(inclIdx),.5);
+    PF                      = signrank(allAUCFO_pop(inclIdx),.5);
+    PC                      = signrank(allAUCC_pop(inclIdx),.5);
+    PCd                     = signrank(allAUCCD_pop(inclIdx),.5);
+    PHM                     = signrank(allAUCHM_pop(inclIdx),.5);
+    PHMd                    = signrank(allAUCHMD_pop(inclIdx),.5);
+    PMC                     = signrank(allAUCMC_pop(inclIdx),.5);
+    PMCd                    = signrank(allAUCMCD_pop(inclIdx),.5);
+    
+    nPFd                    = signrank(allAUCFD_pop(~inclIdx),.5);
+    nPF                     = signrank(allAUCFO_pop(~inclIdx),.5);
+    nPC                     = signrank(allAUCC_pop(~inclIdx),.5);
+    nPCd                    = signrank(allAUCCD_pop(~inclIdx),.5);
+    nPHM                    = signrank(allAUCHM_pop(~inclIdx),.5);
+    nPHMd                   = signrank(allAUCHMD_pop(~inclIdx),.5);
+    nPMC                    = signrank(allAUCMC_pop(~inclIdx),.5);
+    nPMCd                   = signrank(allAUCMCD_pop(~inclIdx),.5);
+
+% PFd    	= fdr(PFd);
+% PF    	= fdr(PF);
+% PC      = fdr(PC);
+% PCd     = fdr(PCd);
+% PHM     = fdr(PHM);
+% PHMd    = fdr(PHMd);
+% PMC     = fdr(PMC);
+% PMCd    = fdr(PMCd);
+% 
+% nPFd    = fdr(nPFd);
+% nPF     = fdr(nPF);
+% nPC     = fdr(nPC);
+% nPCd    = fdr(nPCd);
+% nPHM    = fdr(nPHM);
+% nPHMd   = fdr(nPHMd);
+% nPMC    = fdr(nPMC);
+% nPMCd   = fdr(nPMCd);
+
+f           = figure('Units', 'normalized', 'Position', [0 0 1 1]); axis off
+set(gcf,'color', [1 1 1]);
+alp         = .7;
+clm         = linspace(.08, .79, 4);
+row         = fliplr(linspace(.05, .76, 4));
+dim         = [.2 .2];
+txtsz       = 14;
+
+bin         = linspace(0, 1,50);
+inclIdx     = allIN_pop;    % Only sound-responsive units with sign. FGM
+
+%%% COLUMN 1: Fig vs Ctr
+axO     = axes('Position',[clm(1) row(1) dim]); hold on
+
+vec1                = allAUCFO_pop(~inclIdx);
+vec2                = allAUCFO_pop(inclIdx);
+h1                  = histogram(vec1, bin,'Facecolor', 'k','Edgecolor', 'k','Facealpha', alp,'Edgealpha', 0);
+h2                  = histogram(vec2, bin,'Facecolor', 'r','Edgecolor', 'r','Facealpha', alp,'Edgealpha', 0);
+axO.YLabel.String   = {'Onset';'No. units'};
+Yof                 = axO.YLim(2)/5;
+maxV                = max([h1.Values,h2.Values]);
+axO.YLim            = [0 maxV+(2*Yof)];
+
+line([.5 .5],[axO.YLim], 'LineStyle', ':', 'LineWidth', 2, 'Color', 'k')
+fill([nanmean(vec1)-axO.XLim(2)/50 nanmean(vec1) nanmean(vec1)+axO.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [0 0 0], 'FaceAlpha', alp)
+fill([nanmean(vec2)-axO.XLim(2)/50 nanmean(vec2) nanmean(vec2)+axO.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
+plotStar(nPF, 1, 1, nanmean(vec1), axO.XLim(2)/50, maxV+Yof, [0 0 0])
+plotStar(PF, 1, 1, nanmean(vec2), axO.XLim(2)/50, maxV+Yof, [1 0 0])
+testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
+
+if iAn == 1
+    lg = legend('n.s.','p < .01', 'Location','Northwest');
+    lg.FontSize = 8;
+    legend boxoff
+end
+
+axD     = axes('Position',[clm(1) row(2) dim]); hold on
+
+vec1                = allAUCFD_pop(~inclIdx);
+vec2                = allAUCFD_pop(inclIdx);
+h1                  = histogram(vec1, bin,'Facecolor', 'k','Edgecolor', 'k','Facealpha', alp,'Edgealpha', 0);
+h2                  = histogram(vec2, bin,'Facecolor', 'r','Edgecolor', 'r','Facealpha', alp,'Edgealpha', 0);
+axD.YLabel.String   = {'Decision';'No. units'};
+Yof                 = axD.YLim(2)/5;
+maxV                = max([h1.Values,h2.Values]);
+axD.YLim            = [0 maxV+(2*Yof)];
+
+line([.5 .5],[axD.YLim], 'LineStyle', ':', 'LineWidth', 2, 'Color', 'k')
+fill([nanmean(vec1)-axD.XLim(2)/50 nanmean(vec1) nanmean(vec1)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [0 0 0], 'FaceAlpha', alp)
+fill([nanmean(vec2)-axD.XLim(2)/50 nanmean(vec2) nanmean(vec2)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
+plotStar(nPFd, 1, 1, nanmean(vec1), axD.XLim(2)/50, maxV+Yof, [0 0 0])
+plotStar(PFd, 1, 1, nanmean(vec2), axD.XLim(2)/50, maxV+Yof, [1 0 0])
+testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
+
+if iAn == 2 && iFi == 2
+    axO.XAxis.Visible = 'off';
+    axD.XTick = [0 .25 .5 .75 1];
+    axD.XLabel.String = 'AUROC';
+else
+    axO.XAxis.Visible = 'off';
+    axD.XAxis.Visible = 'off';
+end
+
+%%% COLUMN 2: Coherence
+axO     = axes('Position',[clm(2) row(1) dim]); hold on
+
+vec1                = allAUCC_pop(~inclIdx);
+vec2                = allAUCC_pop(inclIdx);
+h1                  = histogram(vec1, bin,'Facecolor', 'k','Edgecolor', 'k','Facealpha', alp,'Edgealpha', 0);
+h2                  = histogram(vec2, bin,'Facecolor', 'r','Edgecolor', 'r','Facealpha', alp,'Edgealpha', 0);
+axO.YLabel.String   = {'Onset';'No. units'};
+Yof                 = axO.YLim(2)/5;
+maxV                = max([h1.Values,h2.Values]);
+axO.YLim            = [0 maxV+(2*Yof)];
+
+line([.5 .5],[axO.YLim], 'LineStyle', ':', 'LineWidth', 2, 'Color', 'k')
+fill([nanmean(vec1)-axD.XLim(2)/50 nanmean(vec1) nanmean(vec1)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [0 0 0], 'FaceAlpha', alp)
+fill([nanmean(vec2)-axD.XLim(2)/50 nanmean(vec2) nanmean(vec2)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
+plotStar(nPC, 1, 1, nanmean(vec1), axO.XLim(2)/50, maxV+Yof, [0 0 0])
+plotStar(PC, 1, 1, nanmean(vec2), axO.XLim(2)/50, maxV+Yof, [1 0 0])
+testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
+
+
+axD     = axes('Position',[clm(2) row(2) dim]); hold on
+
+vec1                = allAUCCD_pop(~inclIdx);
+vec2                = allAUCCD_pop(inclIdx);
+h1                  = histogram(vec1, bin,'Facecolor', 'k','Edgecolor', 'k','Facealpha', alp,'Edgealpha', 0);
+h2                  = histogram(vec2, bin,'Facecolor', 'r','Edgecolor', 'r','Facealpha', alp,'Edgealpha', 0);
+axD.YLabel.String   = {'Decision';'No. units'};
+Yof                 = axD.YLim(2)/5;
+maxV                = max([h1.Values,h2.Values]);
+axD.YLim            = [0 maxV+Yof];
+
+line([.5 .5],[axD.YLim], 'LineStyle', ':', 'LineWidth', 2, 'Color', 'k')
+fill([nanmean(vec1)-axD.XLim(2)/50 nanmean(vec1) nanmean(vec1)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [0 0 0], 'FaceAlpha', alp)
+fill([nanmean(vec2)-axD.XLim(2)/50 nanmean(vec2) nanmean(vec2)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
+plotStar(nPCd, 1, 1, nanmean(vec1), axD.XLim(2)/50, maxV+Yof, [0 0 0])
+plotStar(PCd, 1, 1, nanmean(vec2), axD.XLim(2)/50, maxV+Yof, [1 0 0])
+testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
+
+if iAn == 2 && iFi == 2
+    axO.XAxis.Visible = 'off';
+    axD.XTick = [0 .25 .5 .75 1];
+    axD.XLabel.String = 'AUROC';
+else
+    axO.XAxis.Visible = 'off';
+    axD.XAxis.Visible = 'off';
+end
+
+%%% COLUMN 3: HI vs MI
+axO     = axes('Position',[clm(3) row(1) dim]); hold on
+
+vec1                = allAUCHM_pop(~inclIdx);
+vec2                = allAUCHM_pop(inclIdx);
+h1                  = histogram(vec1, bin,'Facecolor', 'k','Edgecolor', 'k','Facealpha', alp,'Edgealpha', 0);
+h2                  = histogram(vec2, bin,'Facecolor', 'r','Edgecolor', 'r','Facealpha', alp,'Edgealpha', 0);
+axO.YLabel.String   = {'Onset';'No. units'};
+Yof                 = axO.YLim(2)/5;
+maxV                = max([h1.Values,h2.Values]);
+axO.YLim            = [0 maxV+(2*Yof)];
+
+line([.5 .5],[axO.YLim], 'LineStyle', ':', 'LineWidth', 2, 'Color', 'k')
+fill([nanmean(vec1)-axO.XLim(2)/50 nanmean(vec1) nanmean(vec1)+axO.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [0 0 0], 'FaceAlpha', alp)
+fill([nanmean(vec2)-axO.XLim(2)/50 nanmean(vec2) nanmean(vec2)+axO.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
+plotStar(nPHM, 1, 1, nanmean(vec1), axO.XLim(2)/50, maxV+Yof, [0 0 0])
+plotStar(PHM, 1, 1, nanmean(vec2), axO.XLim(2)/50, maxV+Yof, [1 0 0])
+testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
+
+axD     = axes('Position',[clm(3) row(2) dim]); hold on
+
+vec1                = allAUCHMD_pop(~inclIdx);
+vec2                = allAUCHMD_pop(inclIdx);
+h1                  = histogram(vec1, bin,'Facecolor', 'k','Edgecolor', 'k','Facealpha', alp,'Edgealpha', 0);
+h2                  = histogram(vec2, bin,'Facecolor', 'r','Edgecolor', 'r','Facealpha', alp,'Edgealpha', 0);
+axD.YLabel.String   = {'Decision';'No. units'};
+Yof                 = axD.YLim(2)/5;
+maxV                = max([h1.Values,h2.Values]);
+axD.YLim            = [0 maxV+(2*Yof)];
+
+line([.5 .5],[axD.YLim], 'LineStyle', ':', 'LineWidth', 2, 'Color', 'k')
+fill([nanmean(vec1)-axD.XLim(2)/50 nanmean(vec1) nanmean(vec1)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [0 0 0], 'FaceAlpha', alp)
+fill([nanmean(vec2)-axD.XLim(2)/50 nanmean(vec2) nanmean(vec2)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
+plotStar(nPHMd, 1, 1, nanmean(vec1), axD.XLim(2)/50, maxV+Yof, [0 0 0])
+plotStar(PHMd, 1, 1, nanmean(vec2), axD.XLim(2)/50, maxV+Yof, [1 0 0])
+testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
+
+if iAn == 2
+    axO.XAxis.Visible = 'off';
+    axD.XTick = [0 .25 .5 .75 1];
+    axD.XLabel.String = 'AUROC';
+else
+    axO.XAxis.Visible = 'off';
+    axD.XAxis.Visible = 'off';
+end
+
+%%% COLUMN 4: MI vs CR
+axO     = axes('Position',[clm(4) row(1) dim]); hold on
+
+
+vec1                = allAUCMC_pop(~inclIdx);
+vec2                = allAUCMC_pop(inclIdx);
+h1                  = histogram(vec1, bin,'Facecolor', 'k','Edgecolor', 'k','Facealpha', alp,'Edgealpha', 0);
+h2                  = histogram(vec2, bin,'Facecolor', 'r','Edgecolor', 'r','Facealpha', alp,'Edgealpha', 0);
+axO.YLabel.String   = {'Onset';'No. units'};
+Yof                 = axO.YLim(2)/5;
+maxV                = max([h1.Values,h2.Values]);
+axO.YLim            = [0 maxV+(2*Yof)];
+
+line([.5 .5],[axO.YLim], 'LineStyle', ':', 'LineWidth', 2, 'Color', 'k')
+fill([nanmean(vec1)-axO.XLim(2)/50 nanmean(vec1) nanmean(vec1)+axO.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [0 0 0], 'FaceAlpha', alp)
+fill([nanmean(vec2)-axO.XLim(2)/50 nanmean(vec2) nanmean(vec2)+axO.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
+plotStar(nPMC, 1, 1, nanmean(vec1), axO.XLim(2)/50, maxV+Yof, [0 0 0])
+plotStar(PMC, 1, 1, nanmean(vec2), axO.XLim(2)/50, maxV+Yof, [1 0 0])
+testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
+
+
+axD     = axes('Position',[clm(4) row(2) dim]); hold on
+
+vec1                = allAUCMCD_pop(~inclIdx);
+vec2                = allAUCMCD_pop(inclIdx);
+h1                  = histogram(vec1, bin,'Facecolor', 'k','Edgecolor', 'k','Facealpha', alp,'Edgealpha', 0);
+h2                  = histogram(vec2, bin,'Facecolor', 'r','Edgecolor', 'r','Facealpha', alp,'Edgealpha', 0);
+axD.YLabel.String   = {'Decision';'No. units'};
+Yof                 = axD.YLim(2)/5;
+maxV                = max([h1.Values,h2.Values]);
+axD.YLim            = [0 maxV+(2*Yof)];
+
+line([.5 .5],[axD.YLim], 'LineStyle', ':', 'LineWidth', 2, 'Color', 'k')
+fill([nanmean(vec1)-axD.XLim(2)/50 nanmean(vec1) nanmean(vec1)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [0 0 0], 'FaceAlpha', alp)
+fill([nanmean(vec2)-axD.XLim(2)/50 nanmean(vec2) nanmean(vec2)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
+plotStar(nPMCd, 1, 1, nanmean(vec1), axD.XLim(2)/50, maxV+Yof, [0 0 0])
+plotStar(PMCd, 1, 1, nanmean(vec2), axD.XLim(2)/50, maxV+Yof, [1 0 0])
+testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
+
+if iAn == 2
+    axO.XAxis.Visible = 'off';
+    axD.XTick = [0 .25 .5 .75 1];
+    axD.XLabel.String = 'AUROC';
+else
+    axO.XAxis.Visible = 'off';
+    axD.XAxis.Visible = 'off';
+end
+
+of = .05;
+ax0 = axes('Position',[0 0 1 1],'Visible','off');
+text(clm(1)-of,.99, 'a', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(2)-of,.99, 'b', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(3)-of,.99, 'c', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(4)-of,.99, 'd', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+
+of = .015;
+text(clm(1)+of, .985, 'Fig vs Ctr', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(2)+of, .985, 'Coh8 vs Coh12', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(3)+of, .985, 'HI vs MI', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(4)+of, .985, 'MI vs CR', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
+
+% export_fig([dest_dir 'FIG5_roc_pop_pooled'], '-r400',f);
+
+
 
 %%
 

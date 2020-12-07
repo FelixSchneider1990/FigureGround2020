@@ -1,14 +1,21 @@
 %% Click trains
 
-addpath \\campus\rdw\ion02\02\auditory\Felix\Documents\Publications\FigGnd_Ephys\Figures
-load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Dollar\2019-07-03_11-01-30\Data\DataStruct_2019-07-03.mat')
-chan                = 'ch20';
+% addpath \\campus\rdw\ion02\02\auditory\Felix\Documents\Publications\FigGnd_Ephys\Figures
+% load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Dollar\2019-07-03_11-01-30\Data\DataStruct_2019-07-03.mat')
+% chan                = 'ch20';
 clus                = 'clus2';
-data.(chan).Spks    = getSpikesSU(data, '20');           % Import spike file
+% data.(chan).Spks    = getSpikesSU(data, '20');           % Import spike file
+% tmp                 = data.(chan);
+% tmp.ev              = data.evCodes;
+% tmp.evt             = data.trials.Tun.evt;
+% save('Channel20Data.mat', 'tmp', '-v7.3')
 
-mat     = data.(chan).Spks.(clus).Tun.CLK.psth;
-lfp     = data.(chan).LFP.Tun.CLK.sig;
-spT     = data.(chan).Spks.(clus).Tun.CLK.spikeTimes;
+load('/Users/fschneider/ownCloud/NCL_revision/Figures/raw/Channel20Data.mat')
+evt     = tmp.evt;
+ev      = tmp.ev;
+mat     = tmp.Spks.(clus).Tun.CLK.psth;
+lfp     = tmp.LFP.Tun.CLK.sig;
+spT     = tmp.Spks.(clus).Tun.CLK.spikeTimes;
 clk_EV  = evt{3}(evt{3} >= ev.CLK(1) & evt{3} <= ev.CLK(2));            % Event codes
 cFreq   = unique(clk_EV);                                               % [25 50 75 100] Hz
 cm     	= [[.9 0 0]; [0 0 0]; [0 0 .9]];
@@ -19,7 +26,7 @@ for iCl = 1:length(cFreq)
     clkLFP{iCl}  = exludeTrials(clkLFP{iCl}, [], 5, 'PEAK', 'NAN', 1, 1000);
 end
 
-fig         = figInit('fig'); axis off
+f           = figure('Units', 'normalized', 'Position', [0 0 .4 .5]); set(gcf,'color', [1 1 1]);
 ax0         = axes('Position',[0 0 1 1],'Visible','off');
 dim         = size(clkLFP);
 maxVLFP     = 400;
@@ -34,7 +41,7 @@ T           = 1/Fs;                                                    	% Sampli
 L           = 200;                                                   	% Length of signal
 t           = (0:L-1)*T;                                             	% Time vector
 f           = Fs*(0:(L/2))/L;                                           % Frequency vector
-
+cc = 0;
 for iFreq = 1:dim(2)
     
     axR         = axes('Position',[row(iFreq) .76 .2 .2]);
@@ -158,5 +165,6 @@ end
 text(0,.98, 'a', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 text(0,.31, 'b', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 
-dest_dir = 'X:\Felix\Thesis\Chapter4\stbl_fig\';
-print(fig,[dest_dir 'Click'],'-dpng', '-r400');
+addpath /Users/fschneider/Documents/MATLAB/altmany-export_fig-8b0ba13
+dest_dir = '/Users/fschneider/ownCloud/NCL_revision/Figures/';
+export_fig([dest_dir 'SFIG2'], '-r400',f);

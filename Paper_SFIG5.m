@@ -1,7 +1,7 @@
 %% SFIG 3.1: Figure chords: No frequency elements in RF
 
 F8 = []; F12 = []; lat8 = []; lat12 = [];
-dest_dir    = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\';
+dest_dir    = '/Users/fschneider/ownCloud/NCL_revision/Figures/';
 typ         = 'muae';
 indxR       = 201:400; % corresponds to -300:-100ms to decision
 indx        = 401:600;
@@ -17,7 +17,7 @@ for iAn = 1:2
         animalID = 'Dollar';
     end
     
-    load([dest_dir 'raw\tMap_' animalID '_' typ  '.mat']);
+    load([dest_dir 'raw/tMap_' animalID '_' typ  '.mat']);
     AP      = find(logical(sum(~isnan(mfr_mat),2)));
     ML      = find(logical(sum(~isnan(mfr_mat))));
     [x,y] = coreBoundary(mfr_mat,AP,ML,false,animalID);
@@ -93,7 +93,8 @@ end
 pCorr = fdr(pCorr);
 
 %%
-f   = figure('Units', 'normalized', 'Position', [0 0 1 1]); set(gcf,'color', [1 1 1]); axis off
+
+f   = figure('Units', 'normalized', 'Position', [0 0 .6 .6]); set(gcf,'color', [1 1 1]); axis off
 col = [0 .9 0; .9 0 0];
 dim = [.2 .2];
 r   = linspace(.08, .74,4);
@@ -287,8 +288,8 @@ for iFi = 1:2
     
     ax.XTickLabel           = {'Coh8', 'Coh12', 'Coh8', 'Coh12'};
     ax.XTickLabelRotation   = 10;
-    text(1.35, 450, 'M1', 'FontSize', 14)
-    text(3.35, 450, 'M2', 'FontSize', 14)
+    text(1.35, 475, 'M1', 'FontSize', 14)
+    text(3.35, 475, 'M2', 'FontSize', 14)
     
     if iFi == 2
         ax.Title.String = 'POS';
@@ -358,6 +359,6 @@ text(0,.98, 'a', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bol
 text(.52,.98, 'b', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 text(.52,.6, 'c', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 
-addpath X:\Felix\Scripts\Stuff\export_fig-master
-dest_dir = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\';
-export_fig([dest_dir 'SFIG2'], '-r400',f);
+addpath /Users/fschneider/Documents/MATLAB/altmany-export_fig-8b0ba13
+dest_dir = '/Users/fschneider/ownCloud/NCL_revision/Figures/';
+export_fig([dest_dir 'SFIG_control'], '-r400',f);

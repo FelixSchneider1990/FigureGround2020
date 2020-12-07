@@ -4,31 +4,36 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% FIG 4 %%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- 
-% load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Eric\Summary\muae.mat')
+clearvars -except muaeE muaeD lfpE lfpD
+% ddir = 'Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Eric\Summary\';
+ddirE = '/Volumes/Felix_ExtDrive/Rec/Eric/Summary/';
+ddirD = '/Volumes/Felix_ExtDrive/Rec/Dollar/Summary/';
+
+% load([ddirE 'muae.mat'])
 % muaeE = muae;
-% load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Dollar\Summary\muae.mat')
+% load([ddirD 'muae.mat'])
 % muaeD = muae;
 % clear muae
-% load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Eric\Summary\mLFP.mat')
+% load([ddirE 'mLFP.mat'])
 % lfpE = lfp;
-% load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Dollar\Summary\mLFP.mat')
+% load([ddirD 'mLFP.mat'])
 % lfpD = lfp;
 % clear lfp
 
-f           = figure('Units', 'normalized', 'Position', [0 0 1 1]); axis off
-set(gcf,'color', [1 1 1]);
+f           = figure('Units', 'normalized', 'Position', [0 0 .6 .6]); axis off
+set(f,'color', [1 1 1]);
 ax0         = axes('Position',[0 0 1 1],'Visible','off');
 f1        	= 7;
 f2          = 100;
 noF         = 100;
-fr        	= round(linspace(7,100,100));
-row         = linspace(.1, .74, 6);
-clm         = [0.08    0.27    0.62 .81];
-dim         = [.17 .17];
-txtsz       = 12;
+frq       	= round(linspace(7,100,100));
+row         = linspace(.08, .75, 4);
+clm         = [0.06    0.25    0.58 .77];
+dim         = [.18 .2];
+txtsz       = 14;
 indx        = 201:400; % corresponds to -301:-100ms to decision
-dest_dir    = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\';
+% dest_dir    = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\';
+dest_dir    = '/Users/fschneider/ownCloud/NCL_revision/Figures/';
 typ         = 'muae';
 
 clear idxE idxD
@@ -49,11 +54,11 @@ for iCh = 1:size(lfpD.so,1)
 end
 
 for iAn = 1:2
-    lfp = []; x = []; y = [];
+    lfp = []; x = []; y = []; post = [];
     
     if iAn == 1
         animalID = 'Eric';
-        load([dest_dir 'raw\tMap_' animalID '_' typ  '.mat']);
+        load([dest_dir 'raw/tMap_' animalID '_' typ  '.mat']);
         AP      = find(logical(sum(~isnan(mfr_mat),2)));
         ML      = find(logical(sum(~isnan(mfr_mat))));
         [x,y]   = coreBoundary(mfr_mat,AP,ML,false,animalID);
@@ -61,7 +66,7 @@ for iAn = 1:2
         idx     = idxE;
     else
         animalID = 'Dollar';
-        load([dest_dir 'raw\tMap_' animalID '_' typ  '.mat']);
+        load([dest_dir 'raw/tMap_' animalID '_' typ  '.mat']);
         AP      = find(logical(sum(~isnan(mfr_mat),2)));
         ML      = find(logical(sum(~isnan(mfr_mat))));
         [x,y]   = coreBoundary(mfr_mat,AP,ML,false,animalID);
@@ -77,7 +82,7 @@ for iAn = 1:2
         end
         
         if lfp.coord(i,1) > y(round(lfp.coord(i,2))-(x(1)-1))
-            post(i) = true;
+            post(i) = true; 
         else
             post(i) = false;
         end
@@ -88,6 +93,7 @@ for iAn = 1:2
         if idx(iSite) == 0
             continue
         end
+        
         z8(:,:,iSite)   = lfp.zmap8(:,:,iSite);
         z12(:,:,iSite)  = lfp.zmap12(:,:,iSite);
     end
@@ -144,11 +150,11 @@ for iAn = 1:2
         set(h, 'EdgeColor', 'none');
         ax.YTick = [1 50 100];
 %         ax.YTickLabel = [fr(1) fr(25) fr(50) fr(75) fr(100)];
-        ax.YTickLabel = [fr(1) fr(50) fr(100)];
+        ax.YTickLabel = [frq(1) frq(50) frq(100)];
         ax.XTick = [100 200 300 400 500];
         ax.XTickLabel = {'-400','-300','-200','-100','0'};
         ax.FontSize = txtsz;
-        ax.XLim = [1 401];
+        ax.XLim = [1 401];        
         
         if iPlot == 1 || iPlot == 3
             ax.XAxis.Visible = 'off';
@@ -159,17 +165,23 @@ for iAn = 1:2
             ax.YAxis.Visible = 'off';       
         end
         
-        if iPlot ==1 && iAn == 1
+        if iPlot == 1
+            text(10,95, ['n = ' num2str(sum(idx & ~post))])
+        elseif iPlot == 2
+            text(10,95, ['n = ' num2str(sum(idx & post))])
+        end
+        
+        if iPlot == 1 && iAn == 1
             r = rectangle('Position',[201 1 200 25]);
-            r.LineWidth = 2;
+            r.LineWidth = 4;
             r.LineStyle = '--';
             r = rectangle('Position',[201 30 200 70]);
-            r.LineWidth = 2;
+            r.LineWidth = 4;
             r.LineStyle = '--';
         end
         
         caxis([-2 2])
-        colormap('jet')
+        ax.Colormap = jet(256);
         xlabel('Time [ms]')
         box off 
         
@@ -184,17 +196,93 @@ for iAn = 1:2
         
         if iAn == 1 && iPlot == 4
             cb = colorbar;
-            cb.Position(1) = clm(2)+.2;
+            cb.Position(1) = clm(2)+.23;
+            cb.Position(4) = .1;
+            cb.Position(2) = row(1) + .0375;
             cb.Ticks = [-2 0 2];
             cb.Label.String = {'Power difference';'[z-score]'};
+            cb.Label.FontSize = 12;
+        end 
+        
+        %%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%
+        
+        LFPmat = [];
+        if iPlot == 1
+            LFPmat = lfp.fr8(logical(idx) & ~post,:) ./ mean(lfp.rcr(logical(idx) & ~post,1001:2500),2); % a8
+            r = 4; c = 1;
+        elseif iPlot == 2
+            LFPmat = lfp.fr8(logical(idx) & post,:) ./ mean(lfp.rcr(logical(idx) & post,1001:2500),2); % p8
+            r = 2; c = 1;
+        elseif iPlot == 3
+            LFPmat = lfp.fr12(logical(idx) & ~post,:) ./ mean(lfp.rcr(logical(idx) & ~post,1001:2500),2); % a12
+            r = 4; c = 2;
+        elseif iPlot == 4
+            LFPmat = lfp.fr12(logical(idx) & post,:) ./ mean(lfp.rcr(logical(idx) & post,1001:2500),2); % p12
+            r = 2; c = 2;
         end
+        
+        if iAn == 2
+            c = c+2;
+        end
+        
+        axRAW = axes('Position',[clm(c) row(r) dim]);
+        hold on
+        idxR = 1:400;
+        imagesc(LFPmat(:,idxR))
+        hold on
+        caxis([-3 3])
+        axRAW.Colormap = gray(256);
+        axRAW.FontSize = txtsz;
+        axRAW.YLim = [1 size(LFPmat,1)];
+%         axRAW.YTick = [1 200 400 600 800];
+%         axRAW.XTick = [100 200 300 399];
+%         axRAW.XTickLabel = {'-400','-300','-200','-100'};
+        
+        if iAn == 1 && iPlot == 1
+            rr = rectangle('Position',[201 2 198 size(LFPmat,1)-2]);
+            rr.LineWidth = 4;
+            rr.EdgeColor = [0 0 0];
+            rr.LineStyle = '--';
+        end
+        
+        if iAn == 1 && (iPlot == 1 || iPlot == 2)
+            axRAW.YLabel.String = 'No. Contacts';
+        end
+
+        yyaxis right
+        plot(median(LFPmat(:,idxR)), 'LineWidth', 2, 'Color', 'r')
+        ylabel('Amplitude [uV]')
+        axRAW.YLim = [-1 3];
+        axRAW.YAxis(2).Color = 'r';
+        axRAW.XAxis.Visible = 'off';
+
+        if iPlot == 1 || iPlot == 2
+            axRAW.YAxis(2).Visible = 'off'; 
+        end  
+        
+        if iPlot == 3 || iPlot == 4
+            axRAW.YAxis(1).Visible = 'off';
+        end
+        
+        if iAn == 1 && iPlot == 3
+            cb = colorbar;
+            cb.Position(1) = clm(2)+.23;
+            cb.Position(4) = .1;
+            cb.Position(2) = row(4) + .0375;
+            cb.Ticks = [-3 0 3];
+            cb.Label.String = {'LFP [norm]'};
+            cb.Label.FontSize = 12;
+        end
+        
     end
 end
 
-text(clm(1)+.07,.97, 'Coh8', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
-text(clm(2)+.05,.97, 'Coh12', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
-text(clm(3)+.07,.97, 'Coh8', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
-text(clm(4)+.05,.97, 'Coh12', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(1)+.08,.97, 'Coh8', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(2)+.08,.97, 'Coh12', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(3)+.08,.97, 'Coh8', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(4)+.08,.97, 'Coh12', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
 
 text(clm(1),.97, 'M1', 'Parent', ax0, 'FontSize', 25, 'Color', 'k', 'FontWeight', 'bold')
 text(clm(3),.97, 'M2', 'Parent', ax0, 'FontSize', 25, 'Color', 'k', 'FontWeight', 'bold')
@@ -202,139 +290,141 @@ text(clm(3),.97, 'M2', 'Parent', ax0, 'FontSize', 25, 'Color', 'k', 'FontWeight'
 % t1 = text(.03,row(3)+.18, 'ANT', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold');set(t1,'Rotation',90);
 % t2 = text(.03,row(1)+.18, 'POS', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold');set(t2,'Rotation',90);
 
+
 %%% MUAe %%%%
-HI8 = []; HI12 = []; CR = [];
-alph = .01;
+% HI8 = []; HI12 = []; CR = [];
+% alph = .01;
+% 
+% for iAn = 1:2
+%     
+%     if iAn == 1
+%         antM = []; posM = [];
+%         animalID = 'Eric';
+%         load([dest_dir 'raw/tMap_' animalID '_' typ  '.mat']);
+%         AP      = find(logical(sum(~isnan(mfr_mat),2)));
+%         ML      = find(logical(sum(~isnan(mfr_mat))));
+%         [x,y]   = coreBoundary(mfr_mat,AP,ML,false,animalID);
+%         [antM, posM] = sortUnits(x,y,muaeE);
+%     elseif iAn == 2
+%         animalID = 'Dollar';
+%         load([dest_dir 'raw/tMap_' animalID '_' typ  '.mat']);
+%         AP      = find(logical(sum(~isnan(mfr_mat),2)));
+%         ML      = find(logical(sum(~isnan(mfr_mat))));
+%         [x,y]   = coreBoundary(mfr_mat,AP,ML,false,animalID);
+%         [antM, posM] = sortUnits(x,y,muaeD);
+%     end
+%     
+%     for iFi = 1:2 
+%         if iFi == 1
+%             d   = antM;
+%             str = 'ant';
+%         else
+%             d   = posM;
+%             str = 'pos';
+%         end
+%         
+%         c = 0; hi8 = []; hi12 = []; cr = [];
+%         
+%         for ii = 1:size(d,2)
+%             incl = check20Hz(d{ii});
+%             if length(d{ii}.BLslope) < 200 || incl == 0
+%                 continue
+%             end
+%             
+%             datestr     = str2num([d{ii}.id(1:4) d{ii}.id(6:7) d{ii}.id(9:10)]);
+%             test        = mean([d{ii}.res.HI12(:,indx); d{ii}.res.HI8(:,indx)],2);
+%             ctrl        = mean(d{ii}.res.CR(:,indx),2);
+%             pp          = anova1([test; ctrl],[zeros(size(test,1),1);ones(size(ctrl,1),1)], 'off');
+%             
+%             if pp < alph && sum(d{ii}.nTr>=10) == length(d{ii}.nTr) && datestr - 20190806 <= 0
+%                 mBL         = nanmean(nanmean(d{ii}.on.fullAvg(:,101:500),2));        	% Average BL response
+%                 c = c+1;
+%                 hi8(c,:)    = nanmean((muaeD{ii}.res.HI8)./mBL);
+%                 hi12(c,:)   = nanmean((muaeD{ii}.res.HI12)./mBL);
+%                 cr(c,:)     = nanmean((muaeD{ii}.res.CR)./mBL);
+%                 
+%             end
+%         end
+%         HI8{iAn, iFi}   = hi8;
+%         HI12{iAn, iFi}  = hi12;
+%         CR{iAn, iFi}    = cr;
+%     end 
+% end
+% 
+% %%% PLOT %%%
+% for iAn = 1:2
+%     for iFi = 1:2
+%         clear tfmat8 tfmat12      
+%         mat8        = HI8{iAn, iFi}-CR{iAn, iFi};
+%         mat12       = HI12{iAn, iFi}-CR{iAn, iFi};
+%         [~,idx]     = sort(nanmean(mat8(:,indx),2),'descend'); 
+% 
+%         if iAn == 1 && iFi == 1
+%             r = 4; c = 1;
+%         elseif iAn == 1 && iFi == 2
+%             r = 2; c = 1;
+%         elseif iAn == 2 && iFi == 1
+%             r = 4; c = 3;
+%         elseif iAn == 2 && iFi == 2
+%             r = 2; c = 3;
+%         end
+%         
+%         ax1 = axes('Position',[clm(c) row(r) dim]);
+%         imagesc(mat8(idx,1:401))
+%         ax1.FontSize = txtsz;
+%         ax1.YTick = [1 round(size(HI12{iAn, iFi},1)/2) size(HI12{iAn, iFi},1)];
+%         cm = colormap(ax1,jet(256));
+%         caxis(ax1,[-.025 .025])
+%         box off
+%                 
+%         if iAn == 1 && iFi == 1
+%             rr = rectangle('Position',[201 1 200 size(HI12{iAn, iFi},1)-1]);
+%             rr.LineWidth = 4;
+%             rr.EdgeColor = [0 0 0];
+%             rr.LineStyle = '--';
+%         end
+% 
+%         if iAn == 1
+%             ax1.YLabel.String = 'Unit';
+%         end
+% 
+%         ax2 = axes('Position',[clm(c+1) row(r) dim]);
+%         imagesc(mat12(idx,1:401))
+%         ax2.FontSize = txtsz;
+%         ax2.YAxis.Visible = 'off';
+%         colormap(ax2,jet(256));
+%         caxis(ax2,[-.025 .025])
+%         box off
+% 
+%         ax1.XAxis.Visible = 'off';
+%         ax2.XAxis.Visible = 'off';  
+%         
+%         if iAn == 1 && iFi == 1
+%             cb = colorbar;
+%             cb.Position(1) = clm(2)+.23;
+%             cb.Position(4) = .1;
+%             cb.Position(2) = row(4) + .0375;
+%             cb.Ticks = [-.02 0 .02];
+%             cb.Label.String = {'MUA difference';'[Fig - Ctr]'};
+%             cb.Label.FontSize = 12;
+%         end
+%     end
+% end
 
-for iAn = 1:2
-    
-    if iAn == 1
-        antM = []; posM = [];
-        animalID = 'Eric';
-        load([dest_dir 'raw\tMap_' animalID '_' typ  '.mat']);
-        AP      = find(logical(sum(~isnan(mfr_mat),2)));
-        ML      = find(logical(sum(~isnan(mfr_mat))));
-        [x,y]   = coreBoundary(mfr_mat,AP,ML,false,animalID);
-        [antM, posM] = sortUnits(x,y,muaeE);
-    elseif iAn == 2
-        animalID = 'Dollar';
-        load([dest_dir 'raw\tMap_' animalID '_' typ  '.mat']);
-        AP      = find(logical(sum(~isnan(mfr_mat),2)));
-        ML      = find(logical(sum(~isnan(mfr_mat))));
-        [x,y]   = coreBoundary(mfr_mat,AP,ML,false,animalID);
-        [antM, posM] = sortUnits(x,y,muaeD);
-    end
-    
-    for iFi = 1:2 
-        if iFi == 1
-            d   = antM;
-            str = 'ant';
-        else
-            d   = posM;
-            str = 'pos';
-        end
-        
-        c = 0; hi8 = []; hi12 = []; cr = [];
-        
-        for ii = 1:size(d,2)
-            incl = check20Hz(d{ii});
-            if length(d{ii}.BLslope) < 200 || incl == 0
-                continue
-            end
-            
-            datestr     = str2num([d{ii}.id(1:4) d{ii}.id(6:7) d{ii}.id(9:10)]);
-            test        = mean([d{ii}.res.HI12(:,indx); d{ii}.res.HI8(:,indx)],2);
-            ctrl        = mean(d{ii}.res.CR(:,indx),2);
-            pp          = anova1([test; ctrl],[zeros(size(test,1),1);ones(size(ctrl,1),1)], 'off');
-            
-            if pp < alph && sum(d{ii}.nTr>=10) == length(d{ii}.nTr) && datestr - 20190806 <= 0
-                mBL         = nanmean(nanmean(d{ii}.on.fullAvg(:,101:500),2));        	% Average BL response
-                c = c+1;
-                hi8(c,:)    = nanmean((muaeD{ii}.res.HI8)./mBL);
-                hi12(c,:)   = nanmean((muaeD{ii}.res.HI12)./mBL);
-                cr(c,:)     = nanmean((muaeD{ii}.res.CR)./mBL);
-                
-            end
-        end
-        HI8{iAn, iFi}   = hi8;
-        HI12{iAn, iFi}  = hi12;
-        CR{iAn, iFi}    = cr;
-    end 
-end
+text(0,row(4)+.21, 'a', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(0,row(2)+.21, 'b', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 
-%%% PLOT %%%
-for iAn = 1:2
-    for iFi = 1:2
-        clear tfmat8 tfmat12      
-        mat8        = HI8{iAn, iFi}-CR{iAn, iFi};
-        mat12       = HI12{iAn, iFi}-CR{iAn, iFi};
-        [~,idx]     = sort(nanmean(mat8(:,indx),2),'descend'); 
-
-        if iAn == 1 && iFi == 1
-            r = 4; c = 1;
-        elseif iAn == 1 && iFi == 2
-            r = 2; c = 1;
-        elseif iAn == 2 && iFi == 1
-            r = 4; c = 3;
-        elseif iAn == 2 && iFi == 2
-            r = 2; c = 3;
-        end
-        
-        ax1 = axes('Position',[clm(c) row(r) dim]);
-        imagesc(mat8(idx,1:401))
-        ax1.FontSize = txtsz;
-        ax1.YTick = [1 round(size(HI12{iAn, iFi},1)/2) size(HI12{iAn, iFi},1)];
-        cm = colormap(ax1,jet(256));
-        caxis(ax1,[-.025 .025])
-        box off
-                
-        if iAn == 1 && iFi == 1
-            rr = rectangle('Position',[201 1 200 size(HI12{iAn, iFi},1)-1]);
-            rr.LineWidth = 2;
-            rr.EdgeColor = [0 0 0];
-            rr.LineStyle = '--';
-        end
-
-        if iAn == 1
-            ax1.YLabel.String = 'Unit';
-        end
-
-        ax2 = axes('Position',[clm(c+1) row(r) dim]);
-        imagesc(mat12(idx,1:401))
-        ax2.FontSize = txtsz;
-        ax2.YAxis.Visible = 'off';
-        colormap(ax2,jet(256));
-        caxis(ax2,[-.025 .025])
-        box off
-
-        ax1.XAxis.Visible = 'off';
-        ax2.XAxis.Visible = 'off';  
-        
-        if iAn == 1 && iFi == 1
-            cb = colorbar;
-            cb.Position(1) = clm(2)+.2;
-            cb.Ticks = [-.02 0 .02];
-            cb.Label.String = {'MUA difference';'[Fig - Ctr]'};
-        end
-    end
-end
-
-text(0,row(4)+.18, 'a', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
-text(0,row(2)+.18, 'b', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
-
-addpath X:\Felix\Scripts\Stuff\export_fig-master
-dest_dir = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\';
+addpath /Users/fschneider/Documents/MATLAB/altmany-export_fig-8b0ba13
+% dest_dir = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\';
+dest_dir = '/Users/fschneider/ownCloud/NCL_revision/Figures/';
 export_fig([dest_dir 'FIG4'], '-r400',f);
 
 %% SFIG 4.1 Grand average LFP
 
-f = figure('Units', 'normalized', 'Position', [0 0 1 1]);
+f = figure('Units', 'normalized', 'Position', [0 0 .8 1]);
 set(gcf,'color', [1 1 1]);
 ax0         = axes('Position',[0 0 1 1],'Visible','off');
-row         = [.58 .15];
-clm         = [.05 .28];
-dim         = [.2 .3];
-fr        	= round(linspace(100,7,100));
+clm         = [.05 .55];
 f1        	= 7;
 f2          = 100;
 noF         = 100;
@@ -376,60 +466,143 @@ for iSite = 1:size(lfpD.so,1)
     rcrD(:,:,iSite) = 10*log10(lfpD.rcr_pow(:,:,iSite) ./ mbl_powD);
 end
 
-% Average across monkeys and recording sites
+
+%%% Raw LFP %%%%
+iE          = logical(idxE)';
+cntrE     	= lfpE.rcr;
+normE     	= mean(cntrE(:,1001:2500),2);
+foE     	= mean(cat(3,lfpE.fo8(iE,:),lfpE.fo12(iE,:)),3) ./ normE(iE);
+frE     	= mean(cat(3,lfpE.fr8(iE,:),lfpE.fr12(iE,:)),3) ./ normE(iE);
+
+iD          = logical(idxD)';
+cntrD    	= lfpD.rcr;
+normD   	= mean(cntrD(:,1001:2500),2);
+foD     	= mean(cat(3,lfpD.fo8(iD,:),lfpD.fo12(iD,:)),3) ./ normD(iD);
+frD         = mean(cat(3,lfpD.fr8(iD,:),lfpD.fr12(iD,:)),3) ./ normD(iD);
+
+fo          = [foE; foD];
+fr          = [frE; frD];
+
+fo(sum(fo>400,2)>0,:) = [];
+fr(sum(fr>400,2)>0,:) = [];
+
+axFO = axes('Position',[clm(1) .77 .4 .2]);
+idxO = 301:900;
+imagesc(fo(:,idxO))
+hold on
+line([2 2],[1 size(frE,1)],'LineWidth', 5, 'Color', 'k') 
+text(10, round(size(frE,1)/2), 'M1', 'FontSize', 12, 'FontWeight', 'bold')
+caxis([-3 3])
+ylabel('No. Contacts')
+xlabel('Time [ms]')
+axFO.Colormap = gray(256);
+axFO.FontSize = txtsz;
+axFO.XTick = [1 200 400 600];
+axFO.YTick = [1 200 400 600 800];
+axFO.XTickLabel = {'-200','0','200','400'};
+yyaxis right
+plot(mean(fo(:,idxO)), 'LineWidth', 2, 'Color', 'r')
+ylabel('Amplitude [uV]')
+axFO.YAxis(2).Color = 'r';
+
+cb = colorbar;
+cb.Position(1) = clm(2)-.055;
+cb.Position(4) = .1;
+cb.Position(2) = .77 + .05;
+cb.Ticks = [-3 0 3];
+cb.Label.String = {'LFP Amplitude [norm]'};
+cb.Label.FontSize = 12;
+
+axFR = axes('Position',[clm(2) .77 .4 .2]);
+idxR = 1:400;
+imagesc(fr(:,idxR))
+hold on
+line([2 2],[1 size(frE,1)],'LineWidth', 5, 'Color', 'k') 
+text(10, round(size(frE,1)/2), 'M1', 'FontSize', 12, 'FontWeight', 'bold')
+caxis([-3 3])
+xlabel('Time [ms]')
+axFR.Colormap = gray(256);
+axFR.FontSize = txtsz;
+axFR.YTick = [1 200 400 600 800];
+axFR.XTick = [100 200 300 399];
+axFR.XTickLabel = {'-400','-300','-200','-100'};
+yyaxis right
+plot(mean(fr(:,idxR)), 'LineWidth', 2, 'Color', 'r')
+ylabel('Amplitude [uV]')
+axFR.YAxis(2).Color = 'r';
+
+text(clm(1),.98, 'Onset-aligned', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(2),.98, 'Response-aligned', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
+
+%%% Average across monkeys and recording sites
+frq             = round(linspace(100,7,100));
+clm             = linspace(.05, .7, 3);
 mrcr            = nanmean(cat(3,rcrE,rcrD),3);
-ax              = axes('Position',[clm(1) row(1) dim]);
+dim             = [.25 .3];
+of              = .01;
+
+ax              = axes('Position',[clm(1) .4 dim]);
 imagesc(flipud(mrcr))
 ax.YTick        = [1 25 50 75 100];
-ax.YTickLabel   = [fr(1) fr(25) fr(50) fr(75) fr(100)];
+ax.YTickLabel   = [frq(1) frq(25) frq(50) frq(75) frq(100)];
 ax.XTick        = [1 1500 3000];
 ax.FontSize     = 14;
 caxis([-1 2])
 cm              = ([1 1 1; jet(256)]);
-colormap(cm);
-cb              = colorbar;
+colormap(ax,cm);
+cb              = colorbar(ax);
 cb.Label.String = 'Power [dB]';
 cb.FontSize     = 12;
 cb.Ticks        = [-1 0 1 2];
+cb.Position(1)  = clm(1)+dim(1)+of;
+cb.Position(4)  = cb.Position(4)/2;
+cb.Position(2)  = ax.Position(2) + (ax.Position(4)/4);
 xlabel('Time [ms]')
 ylabel('Freq [Hz]')
 box off
 
 % ITPC
-ax              = axes('Position',[clm(2) row(1) dim]);
+ax              = axes('Position',[clm(2) .4 dim]);
 imagesc(flipud(nanmean(cat(3,lfpE.rcr_itpc(:,:,logical(idxE)),lfpD.rcr_itpc(:,:,logical(idxD))),3)))
 ax.YTick        = [1 25 50 75 100];
-ax.YTickLabel   = [fr(1) fr(25) fr(50) fr(75) fr(100)];
+ax.YTickLabel   = [frq(1) frq(25) frq(50) frq(75) frq(100)];
 ax.XTick        = [1 1500 3000];
 ax.FontSize     = 14;
 ax.YAxis.Visible = 'off';
 caxis([0 .5])
 cm              = ([1 1 1; jet(256)]);
-colormap(cm);
-cb              = colorbar;
+colormap(ax,cm);
+cb          	= colorbar(ax);
 cb.Label.String = 'ITPC';
 cb.FontSize     = 12;
 cb.Ticks        = [0 .25 .5];
+cb.Position(1)  = clm(2)+dim(1)+of;
+cb.Position(4)  = cb.Position(4)/2;
+cb.Position(2)  = ax.Position(2) + (ax.Position(4)/4);
 xlabel('Time [ms]')
 ylabel('Freq [Hz]')
 box off
 
 % Grand average - decision aligned
-ax      = axes('Position',[clm(1) row(2) dim]);
+ax      = axes('Position',[clm(3) .4 dim]);
 all     = LFP_exclCycle(nanmean(cat(3,lfpE.zmapF(:,:,logical(idxE)),lfpD.zmapF(:,:,logical(idxD))),3), f1, f2, noF, 2);
 imagesc(flipud(all))
 ax.YTick            = [1 25 50 75 100];
-ax.YTickLabel       = [fr(1) fr(25) fr(50) fr(75) fr(100)];
+ax.YTickLabel       = [frq(1) frq(25) frq(50) frq(75) frq(100)];
 ax.XTick            = [100 200 300 400 500];
 ax.XTickLabel       = {'-400','-300','-200','-100','0'};
 ax.FontSize         = 14;
+ax.YAxis.Visible    = 'off';
 caxis([-5 3])
 cm                  = ([1 1 1; jet(256)]);
-colormap(cm);
-cb                  = colorbar;
+colormap(ax,cm);
+cb                  = colorbar(ax);
 cb.Label.String     = 'Power difference [z-score]';
 cb.FontSize         = 12;
 cb.Ticks            = [-5 -2.5 0 2.5];
+cb.Position(1)      = clm(3)+dim(1)+of;
+cb.Position(4)      = cb.Position(4)/2;
+cb.Position(2)      = ax.Position(2) + (ax.Position(4)/4);
 xlabel('Time [ms]')
 ylabel('Freq [Hz]')
 box off
@@ -441,40 +614,33 @@ r           = rectangle('Position',[201 75 200 25]);
 r.LineWidth = 2;
 r.LineStyle = '--';
 
-%%% Bar release control
-ax              = axes('Position',[clm(2) row(2) dim]);
-load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Dollar\Summary\tfa_BR.mat')
-map             = 10*log10(alltfa);
-imagesc(flipud(mean(map(:,501:1000,:),3)))
-ax.XTick        = [100 200 300 400 500];
-ax.XTickLabel   = {'-400', '-300','-200','-100', '0'};
-ax.FontSize     = 14;
-ax.YAxis.Visible = 'off';
-colormap(cm);
-cb              = colorbar;
-caxis([-1 1])
-cb.Label.String = 'Power [dB]';
-cb.FontSize     = 12;
-cb.Ticks        = [-1 -.5 0 .5 1];
-box off 
-xlabel('Time [ms]')
+text(clm(1)-.03,.99, 'a', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(.5,.99, 'b', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(1)-.03,.72, 'c', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(2)-.03,.72, 'd', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(3)-.03,.72, 'e', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 
-text(0,.92, 'a', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
-text(.26,.92, 'b', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
-text(0,.51, 'c', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
-text(.26,.51, 'd', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
-text(.52,.98, 'e', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+
+addpath /Users/fschneider/Documents/MATLAB/altmany-export_fig-8b0ba13
+dest_dir = '/Users/fschneider/ownCloud/NCL_revision/Figures/';
+export_fig([dest_dir 'SFIG4.1'], '-r400',f);
 
 %% SFIG 4.2
+
+f = figure('Units', 'normalized', 'Position', [0 0 .3 .6]);
+set(gcf,'color', [1 1 1]);
+ax0         = axes('Position',[0 0 1 1],'Visible','off');
 typ     = 'muae';
 lfp     = [];
 f1      = 7;
 f2      = 100;
 noF     = 100;
+dest_dir = '/Users/fschneider/ownCloud/NCL_revision/Figures/';
 
 %%% PLOT %%%
-ind = 151:350;
-dim = [.35 .2];
+% ind = 151:350;
+ind = 201:400;
+dim = [.9 .2];
 row = fliplr(linspace(.04, .74, 4));
 c   = 0;
 
@@ -483,7 +649,7 @@ for iAn = 1:2
     
     if iAn == 1
         animalID = 'Eric';
-        load([dest_dir 'raw\tMap_' animalID '_' typ  '.mat']);
+        load([dest_dir 'raw/tMap_' animalID '_' typ  '.mat']);
         AP      = find(logical(sum(~isnan(mfr_mat),2)));
         ML      = find(logical(sum(~isnan(mfr_mat))));
         [x,y]   = coreBoundary(mfr_mat,AP,ML,false,animalID);
@@ -491,7 +657,7 @@ for iAn = 1:2
         idx     = idxE;
     else
         animalID = 'Dollar';
-        load([dest_dir 'raw\tMap_' animalID '_' typ  '.mat']);
+        load([dest_dir 'raw/tMap_' animalID '_' typ  '.mat']);
         AP      = find(logical(sum(~isnan(mfr_mat),2)));
         ML      = find(logical(sum(~isnan(mfr_mat))));
         [x,y]  	= coreBoundary(mfr_mat,AP,ML,false,animalID);
@@ -551,15 +717,15 @@ for iAn = 1:2
     hA12{iAn}   = ant12(30:end,:,:);
     hP12{iAn}   = pos12(30:end,:,:);
     
-    pga8        = LFP_exclCycle(hP8{iAn}, fr(size(hP8{iAn},1)+1), fr(1), size(hP8{iAn},1), 2);
-    pab8        = LFP_exclCycle(lP8{iAn}, fr(end), fr(100-size(lP8{iAn},1)), size(lP8{iAn},1), 2);
-    pga12       = LFP_exclCycle(hP12{iAn}, fr(size(hP12{iAn},1)+1), fr(1), size(hP12{iAn},1), 2);
-    pab12       = LFP_exclCycle(lP12{iAn}, fr(end), fr(100-size(lP12{iAn},1)), size(lP12{iAn},1), 2);
+    pga8        = LFP_exclCycle(hP8{iAn}, 30, 100, size(hP8{iAn},1), 2);
+    pab8        = LFP_exclCycle(lP8{iAn}, 7, 25, size(lP8{iAn},1), 2);
+    pga12       = LFP_exclCycle(hP12{iAn}, 30, 100, size(hP12{iAn},1), 2);
+    pab12       = LFP_exclCycle(lP12{iAn}, 7, 25, size(lP12{iAn},1), 2);
     
-    aga8        = LFP_exclCycle(hA8{iAn}, fr(size(hA8{iAn},1)+1), fr(1), size(hA8{iAn},1), 2);
-    aab8        = LFP_exclCycle(lA8{iAn}, fr(end), fr(100-size(lA8{iAn},1)), size(lA8{iAn},1), 2);
-    aga12       = LFP_exclCycle(hA12{iAn}, fr(size(hA12{iAn},1)+1), fr(1), size(hA12{iAn},1), 2);
-    aab12       = LFP_exclCycle(lA12{iAn}, fr(end), fr(100-size(lA12{iAn},1)), size(lA12{iAn},1), 2);
+    aga8        = LFP_exclCycle(hA8{iAn}, 30, 100, size(hA8{iAn},1), 2);
+    aab8        = LFP_exclCycle(lA8{iAn}, 7, 25, size(lA8{iAn},1), 2);
+    aga12       = LFP_exclCycle(hA12{iAn}, 30, 100, size(hA12{iAn},1), 2);
+    aab12       = LFP_exclCycle(lA12{iAn}, 7, 25, size(lA12{iAn},1), 2);
  
     [abAP(iAn) abAH(iAn)] = signrank(squeeze(nanmean(nanmean(aab8(:,ind,:),2))),squeeze(nanmean(nanmean(aab12(:,ind,:),2))));
     [abPP(iAn) abPH(iAn)] = signrank(squeeze(nanmean(nanmean(pab8(:,ind,:),2))),squeeze(nanmean(nanmean(pab12(:,ind,:),2))));
@@ -568,16 +734,16 @@ for iAn = 1:2
     
     for iCond = 1:2
         if iAn == 1 && iCond == 1
-            ax = axes('Position',[.6 row(1) dim]); hold on
+            ax = axes('Position',[.1 row(1) dim]); hold on
             str = 'ANT';
         elseif iAn == 1 && iCond == 2
-            ax = axes('Position',[.6 row(2) dim]); hold on
+            ax = axes('Position',[.1 row(2) dim]); hold on
             str = 'POS';
         elseif iAn == 2 && iCond == 1
-            ax = axes('Position',[.6 row(3) dim]); hold on
+            ax = axes('Position',[.1 row(3) dim]); hold on
             str = 'ANT';
         else
-            ax = axes('Position',[.6 row(4) dim]); hold on
+            ax = axes('Position',[.1 row(4) dim]); hold on
             str = 'POS';
         end
         
@@ -619,19 +785,20 @@ for iAn = 1:2
         pz(2) = signrank(k(:,2));
         pz(3) = signrank(k(:,3));
         pz(4) = signrank(k(:,4));
-        
+        pz    = fdr(pz);
+ 
         for iPV = 1:4
             if iPV < 3
-                x = 1.35;
+                x = 1.38;
             else
-                x = 3.35;
+                x = 3.38;
             end
             
             if iPV == 1 || iPV == 3
-                y = 1.2;
+                y = 1.35;
                 cl = 'g';
             else
-                y = 1.8;
+                y = 1.95;
                 cl = 'r';
             end
             
@@ -706,12 +873,13 @@ ax.XAxis.Visible    = 'on';
 ax.XTick            = [1 2 3 4];
 ax.XTickLabel       = {'Coh8', 'Coh12','Coh8', 'Coh12'};
 
-text(.64,.98, 'Alpha/Beta', 'Parent', ax0, 'FontSize', 20, 'Color', 'k', 'FontWeight', 'bold')
-text(.83,.98, 'Gamma', 'Parent', ax0, 'FontSize', 20,'Color', 'k', 'FontWeight', 'bold')
+text(.25,.98, 'Alpha/Beta', 'Parent', ax0, 'FontSize', 20, 'Color', 'k', 'FontWeight', 'bold')
+text(.71,.98, 'Gamma', 'Parent', ax0, 'FontSize', 20,'Color', 'k', 'FontWeight', 'bold')
 
-ylab4 = text(0.53,.71, 'M1', 'Parent', ax0, 'FontSize', 20, 'Color', 'k', 'FontWeight', 'bold'); set(ylab4,'Rotation',90);
-ylab5 = text(0.53,.25, 'M2', 'Parent', ax0, 'FontSize', 20, 'Color', 'k', 'FontWeight', 'bold'); set(ylab5,'Rotation',90);
+ylab4 = text(.03,.71, 'M1', 'Parent', ax0, 'FontSize', 20, 'Color', 'k', 'FontWeight', 'bold'); set(ylab4,'Rotation',90);
+ylab5 = text(.03,.25, 'M2', 'Parent', ax0, 'FontSize', 20, 'Color', 'k', 'FontWeight', 'bold'); set(ylab5,'Rotation',90);
 
-addpath X:\Felix\Scripts\Stuff\export_fig-master
-dest_dir = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\';
-export_fig([dest_dir 'SFIG3'], '-r300',f);
+addpath /Users/fschneider/Documents/MATLAB/altmany-export_fig-8b0ba13
+dest_dir = '/Users/fschneider/ownCloud/NCL_revision/Figures/';
+export_fig([dest_dir 'SFIG4.2'], '-r400',f);
+

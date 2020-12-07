@@ -4,6 +4,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% FIG 2  %%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+clearvars -except muaeE muaeD lfpE lfpD
 
 % load('Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\Eric\Summary\muae.mat')
 % muaeE = muae;
@@ -11,8 +12,14 @@
 % muaeD = muae;
 % clear muae
 
+% load('/Volumes/Felix_ExtDrive/Rec/Eric/Summary/muae.mat')
+% muaeE = muae;
+% load('/Volumes/Felix_ExtDrive/Rec/Dollar/Summary/muae.mat')
+% muaeD = muae;
+% clear muae
+
 %%% CONTROL %%%
-f           = figure('Units', 'normalized', 'Position', [0 0 1 1]); set(gcf,'color', [1 1 1]);
+f           = figure('Units', 'normalized', 'Position', [0 0 .8 1]); set(gcf,'color', [1 1 1]);
 ax0         = axes('Position',[0 0 1 1],'Visible','off');
 Fs          = 1000;                                                  	% Sampling frequency
 T           = 1/Fs;                                                    	% Sampling period
@@ -51,6 +58,7 @@ for iAn = 1:2
         pp          = anova1([test; ctrl],[zeros(size(test,1),1);ones(size(ctrl,1),1)], 'off');
         
         if pp < alph && sum(dd{ii}.nTr>=10) == length(dd{ii}.nTr) && datestr - 20190806 <= 0
+
             %%% Norm: subtract mBL then normalise by average control activity %%%
             mBL       	= nanmean(nanmean(dd{ii}.on.fullAvg(:,101:500),2));                      % Average BL response
 
@@ -62,6 +70,12 @@ for iAn = 1:2
             mctr(c,:)   = nanmean((dd{ii}.on.trlOn(dd{ii}.on.cat == 6,1:600)) ./mBL);
             co(c,:)     = dd{ii}.coord;
        
+            if iAn == 1 && round(co(c,2)) <= 7 && round(co(c,1)) == 10
+                disp('...')
+                disp(dd{ii}.id)
+                disp(dd{ii}.coord)
+                disp(ii)
+            end
         end
     end
     
@@ -144,7 +158,7 @@ axA.YLabel.String   = 'MUA [norm]';
 axA.FontSize        = 14;
 
 text(200,1.2, 'M1', 'FontSize', 12, 'Color', col(1,:), 'FontWeight', 'bold')
-text(200,1.18, 'M2', 'FontSize', 12, 'Color', col(2,:), 'FontWeight', 'bold')
+text(200,1.185, 'M2', 'FontSize', 12, 'Color', col(2,:), 'FontWeight', 'bold')
 line([500 500],[0 2], 'LineStyle', '--', 'LineWidth',lw, 'Color','k')
 line([3500 3500],[0 2], 'LineStyle', '--', 'LineWidth',lw, 'Color','k')
 
@@ -193,10 +207,19 @@ for k = 1:2
 end
 
 %%% Location %%%
-dest_dir    = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\raw';
+% dest_dir    = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\raw';
+dest_dir    = '/Users/fschneider/ownCloud/NCL_revision/Figures/raw/';
 typ         = 'muae';
 alp         = .7;
 
+freqStart           = 180;                                          % Tuning low freq [Hz]
+steps               = 14;                                           % No of desired tones
+PT(1)               = freqStart;                                    % Starting frequency [Hz]
+for i = 2:steps                                                 % For no of tones...
+    PT(i)           =  PT(i-1)*2^(1/2);                             % 1/2 octave steps
+end
+frex                = round(PT);
+    
 for iAn = 2:-1:1
     par = []; mfr_mat = []; mlat_mat = []; cc = 0;
     
@@ -208,9 +231,10 @@ for iAn = 2:-1:1
         axC = axes('Position',[.28 .13 .23 .2]); hold on
     end
     
-    load([dest_dir '\tMap_' animalID '_' typ  '.mat']);
+    load([dest_dir 'tMap_' animalID '_' typ  '.mat']);
     imagesc(1:size(mfr_mat,1),-18:-1, flipud(mfr_mat));
-    
+    caxis([floor(log(frex(1))) (ceil(max(max(mfr_mat))*10)/10)+.3])
+
     if iAn == 1
         sc = scatter([ML{iAn}],[-AP{iAn}]);
         axC.YLim = [-18 -5];
@@ -228,13 +252,6 @@ for iAn = 2:-1:1
     sc.MarkerEdgeColor  = [1 0 0];
     
     colormap([[1 1 1]; gray(256)])
-    freqStart           = 180;                                          % Tuning low freq [Hz]
-    steps               = 14;                                           % No of desired tones
-    PT(1)               = freqStart;                                    % Starting frequency [Hz]
-    for i = 2:steps                                                 % For no of tones...
-        PT(i)           =  PT(i-1)*2^(1/2);                             % 1/2 octave steps
-    end
-    frex                = round(PT);
     
     cm                  = gray(256);
     axCB                = axes('Position',[.37 .33 .001 .1]);
@@ -245,8 +262,7 @@ for iAn = 2:-1:1
     cb.Position(3)      = .01;
     cb.Label.String     = 'Best frequency [Hz]';
     cb.FontSize         = 12;
-    caxis([log(frex(1)) log(frex(11))])
-    caxis([5 log(frex(11))])
+    caxis([floor(log(frex(1))) ceil(log(frex(11)))])
     cb.Ticks            = [log(frex(1)),log(frex(7)),log(frex(11))];
     cb.TickLabels       = {num2str(frex(1)), num2str(frex(7)), ['>' num2str(frex(11))]};
 end
@@ -308,7 +324,7 @@ for kk = 1:2
     
     if kk == 1
         axB.YLim = [1.01 1.12];
-        text(50,1.1, 'CTR', 'FontSize', 12, 'Color', 'k', 'FontWeight', 'bold')
+        text(50,1.103, 'CTR', 'FontSize', 12, 'Color', 'k', 'FontWeight', 'bold')
         text(50,1.11, 'FIG', 'FontSize', 12, 'Color', 'r', 'FontWeight', 'bold')
         of = diff(axB.YLim)*.04;
         lv = axB.YLim(1)+of;
@@ -341,10 +357,10 @@ for iAn = 1:2
         animalID = 'Dollar';
     end
     
-    load([dest_dir '\tMap_' animalID '_' typ  '.mat']);
-    AP      = find(logical(sum(~isnan(mfr_mat),2)));
-    ML      = find(logical(sum(~isnan(mfr_mat))));
-    [x,y] = coreBoundary(mfr_mat,AP,ML,false,animalID);
+    load([dest_dir 'tMap_' animalID '_' typ  '.mat']);
+    APmap   = find(logical(sum(~isnan(mfr_mat),2)));
+    MLmap   = find(logical(sum(~isnan(mfr_mat))));
+    [x,y]   = coreBoundary(mfr_mat,APmap,MLmap,false,animalID);
     
     if strcmp(animalID, 'Eric')
         muae = muaeE;
@@ -376,7 +392,7 @@ for iAn = 1:2
             test        = mean([d{ii}.res.HI12(:,indxR); d{ii}.res.HI8(:,indxR)],2);
             ctrl        = mean(d{ii}.res.CR(:,indxR),2);
             pp          = anova1([test; ctrl],[zeros(size(test,1),1);ones(size(ctrl,1),1)], 'off');
-            
+        
             if pp < alph && sum(d{ii}.nTr>=10) == length(d{ii}.nTr) && datestr - 20190806 <= 0
                 
                 %%% Norm: subtract mBL then normalise by average control activity %%%
@@ -493,9 +509,9 @@ for iAn = 1:2
         if iAn == 2
             axA.YLabel.String = [];
         elseif iFi == 1 && iAn == 1
-            text(50,1.10, 'COH12', 'FontSize', 12, 'Color', col(3,:), 'FontWeight', 'bold')
-            text(50,1.09, 'COH8', 'FontSize', 12, 'Color', col(2,:), 'FontWeight', 'bold')
-            text(50,1.08, 'CTR', 'FontSize', 12, 'Color', col(1,:), 'FontWeight', 'bold')
+            text(50,1.12, 'COH12', 'FontSize', 12, 'Color', col(3,:), 'FontWeight', 'bold')
+            text(50,1.113, 'COH8', 'FontSize', 12, 'Color', col(2,:), 'FontWeight', 'bold')
+            text(50,1.106, 'CTR', 'FontSize', 12, 'Color', col(1,:), 'FontWeight', 'bold')
         end
         
         %%% BAR PLOT %%%
@@ -597,6 +613,6 @@ text(.32,.68, 'c', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'b
 text(.46,.98, 'd', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 text(.46,.5, 'e', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 
-addpath X:\Felix\Scripts\Stuff\export_fig-master
-dest_dir = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\';
-export_fig([dest_dir 'FIG23'], '-r400',f);
+% addpath X:\Felix\Scripts\Stuff\export_fig-master
+dest_dir = '/Users/fschneider/ownCloud/NCL_revision/Figures/';
+% export_fig([dest_dir 'FIG2'], '-r400',f);
