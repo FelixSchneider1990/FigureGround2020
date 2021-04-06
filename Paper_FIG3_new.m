@@ -13,10 +13,10 @@ clearvars -except muaeE muaeD lfpE lfpD
 % clear muae
 
 % load('/Volumes/Felix_ExtDrive/Rec/Eric/Summary/muae.mat')
-% muaeE = muae;
-% load('/Volumes/Felix_ExtDrive/Rec/Dollar/Summary/muae.mat')
-% muaeD = muae;
-% clear muae
+muaeE = muae;
+load('/Volumes/Felix_ExtDrive/Rec/Dollar/Summary/muae.mat')
+muaeD = muae;
+clear muae
 
 typ         = 'muae';
 % dest_dir    = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\';
@@ -203,7 +203,6 @@ for iAn = 1:2
 end
 
 %%% POOL AC %%%
-allIN_pop               = [IN{1,1} IN{1,2} IN{2,1} IN{2,2}];
 COORD_pop               = [COORD{1,1}; COORD{1,2}; COORD{2,1}; COORD{2,2}];
 allAUCFD_pop            = [AUCFD{1,1} AUCFD{1,2} AUCFD{2,1} AUCFD{2,2}];
 allAUCFO_pop            = [AUCFO{1,1} AUCFO{1,2} AUCFO{2,1} AUCFO{2,2}];
@@ -214,7 +213,7 @@ allAUCMC_pop            = [AUCMC{1,1} AUCMC{1,2} AUCMC{2,1} AUCMC{2,2}];
 allAUCHMD_pop           = [AUCHMD{1,1} AUCHMD{1,2} AUCHMD{2,1} AUCHMD{2,2}];
 allAUCMCD_pop           = [AUCMCD{1,1} AUCMCD{1,2} AUCMCD{2,1} AUCMCD{2,2}];
 
-inclIdx                 = allIN_pop;    % Only sound-responsive units with sign. FGM
+inclIdx                 = [IN{1,1} IN{1,2} IN{2,1} IN{2,2}];    % Only sound-responsive units with sign. FGM
 PFd                     = signrank(allAUCFD_pop(inclIdx),.5);
 PF                      = signrank(allAUCFO_pop(inclIdx),.5);
 PC                      = signrank(allAUCC_pop(inclIdx),.5);
@@ -253,7 +252,7 @@ nPMCd                   = signrank(allAUCMCD_pop(~inclIdx),.5);
 
 %% 
 
-f           = figure('Units', 'normalized', 'Position', [0 0 .8 1]); axis off
+f           = figure('Units', 'normalized', 'Position', [0 0 1 1]); axis off
 set(gcf,'color', [1 1 1]);
 alp         = .7;
 clm         = linspace(.08, .79, 4);
@@ -262,7 +261,7 @@ dim         = [.2 .2];
 txtsz       = 14;
 
 bin         = linspace(0, 1,50);
-inclIdx     = allIN_pop;    % Only sound-responsive units with sign. FGM
+% inclIdx     = allIN_pop;    % Only sound-responsive units with sign. FGM
 
 %%% COLUMN 1: Fig vs Ctr
 axO                 = axes('Position',[clm(1) row(1) dim]); hold on
@@ -282,10 +281,10 @@ fill([nanmedian(vec1)-axO.XLim(2)/50 nanmedian(vec1) nanmedian(vec1)+axO.XLim(2)
 fill([nanmedian(vec2)-axO.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axO.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
 plotStar(nPF, 1, 1, nanmedian(vec1), axO.XLim(2)/50, maxV+Yof, [0 0 0])
 plotStar(PF, 1, 1, nanmedian(vec2), axO.XLim(2)/50, maxV+Yof, [1 0 0])
-testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
+% testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
 
-lg = legend('Unresponsive','Modulated', 'Location','Northwest');
-lg.FontSize = 12;
+lg                  = legend('Unresponsive','Modulated', 'Location','Northwest');
+lg.FontSize         = 12;
 legend boxoff
 
 axD                 = axes('Position',[clm(1) row(3) dim]); hold on
@@ -305,7 +304,7 @@ fill([nanmedian(vec1)-axD.XLim(2)/50 nanmedian(vec1) nanmedian(vec1)+axD.XLim(2)
 fill([nanmedian(vec2)-axD.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
 plotStar(nPFd, 1, 1, nanmedian(vec1), axD.XLim(2)/50, maxV+Yof, [0 0 0])
 plotStar(PFd, 1, 1, nanmedian(vec2), axD.XLim(2)/50, maxV+Yof, [1 0 0])
-testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
+% testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
 
 axO.XTick = [0 .25 .5 .75 1];
 axO.XLabel.String = 'AUROC';
@@ -326,11 +325,11 @@ axO.XLim            = [0 1];
 axO.FontSize        = txtsz;
 
 line([.5 .5],[axO.YLim], 'LineStyle', ':', 'LineWidth', 2, 'Color', 'k')
-fill([nanmedian(vec1)-axD.XLim(2)/50 nanmedian(vec1) nanmedian(vec1)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [0 0 0], 'FaceAlpha', alp)
-fill([nanmedian(vec2)-axD.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
+fill([nanmedian(vec1)-axO.XLim(2)/50 nanmedian(vec1) nanmedian(vec1)+axO.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [0 0 0], 'FaceAlpha', alp)
+fill([nanmedian(vec2)-axO.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axO.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
 plotStar(nPC, 1, 1, nanmedian(vec1), axO.XLim(2)/50, maxV+Yof, [0 0 0])
 plotStar(PC, 1, 1, nanmedian(vec2), axO.XLim(2)/50, maxV+Yof, [1 0 0])
-testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
+% testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
 
 
 axD                 = axes('Position',[clm(2) row(3) dim]); hold on
@@ -341,7 +340,7 @@ h2                  = histogram(vec2, bin,'Facecolor', 'r','Edgecolor', 'r','Fac
 axD.YLabel.String   = {'Response-aligned';'No. units'};
 Yof                 = axD.YLim(2)/5;
 maxV                = max([h1.Values,h2.Values]);
-axD.YLim            = [0 maxV+Yof];
+axD.YLim            = [0 maxV+(2*Yof)];
 axD.XLim            = [0 1];
 axD.FontSize        = txtsz;
 
@@ -350,7 +349,7 @@ fill([nanmedian(vec1)-axD.XLim(2)/50 nanmedian(vec1) nanmedian(vec1)+axD.XLim(2)
 fill([nanmedian(vec2)-axD.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
 plotStar(nPCd, 1, 1, nanmedian(vec1), axD.XLim(2)/50, maxV+Yof, [0 0 0])
 plotStar(PCd, 1, 1, nanmedian(vec2), axD.XLim(2)/50, maxV+Yof, [1 0 0])
-testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
+% testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
 
 axO.XTick = [0 .25 .5 .75 1];
 axO.XLabel.String = 'AUROC';
@@ -375,7 +374,7 @@ fill([nanmedian(vec1)-axO.XLim(2)/50 nanmedian(vec1) nanmedian(vec1)+axO.XLim(2)
 fill([nanmedian(vec2)-axO.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axO.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
 plotStar(nPHM, 1, 1, nanmedian(vec1), axO.XLim(2)/50, maxV+Yof, [0 0 0])
 plotStar(PHM, 1, 1, nanmedian(vec2), axO.XLim(2)/50, maxV+Yof, [1 0 0])
-testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
+% testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
 
 axD                 = axes('Position',[clm(3) row(3) dim]); hold on
 vec1                = allAUCHMD_pop(~inclIdx);
@@ -394,7 +393,7 @@ fill([nanmedian(vec1)-axD.XLim(2)/50 nanmedian(vec1) nanmedian(vec1)+axD.XLim(2)
 fill([nanmedian(vec2)-axD.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
 plotStar(nPHMd, 1, 1, nanmedian(vec1), axD.XLim(2)/50, maxV+Yof, [0 0 0])
 plotStar(PHMd, 1, 1, nanmedian(vec2), axD.XLim(2)/50, maxV+Yof, [1 0 0])
-testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
+% testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
 
 axO.XTick = [0 .25 .5 .75 1];
 axO.XLabel.String = 'AUROC';
@@ -420,7 +419,7 @@ fill([nanmedian(vec1)-axO.XLim(2)/50 nanmedian(vec1) nanmedian(vec1)+axO.XLim(2)
 fill([nanmedian(vec2)-axO.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axO.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
 plotStar(nPMC, 1, 1, nanmedian(vec1), axO.XLim(2)/50, maxV+Yof, [0 0 0])
 plotStar(PMC, 1, 1, nanmedian(vec2), axO.XLim(2)/50, maxV+Yof, [1 0 0])
-testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
+% testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
 
 
 axD     = axes('Position',[clm(4) row(3) dim]); hold on
@@ -441,7 +440,7 @@ fill([nanmedian(vec1)-axD.XLim(2)/50 nanmedian(vec1) nanmedian(vec1)+axD.XLim(2)
 fill([nanmedian(vec2)-axD.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
 plotStar(nPMCd, 1, 1, nanmedian(vec1), axD.XLim(2)/50, maxV+Yof, [0 0 0])
 plotStar(PMCd, 1, 1, nanmedian(vec2), axD.XLim(2)/50, maxV+Yof, [1 0 0])
-testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
+% testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
 
 axO.XTick = [0 .25 .5 .75 1];
 axO.XLabel.String = 'AUROC';
@@ -606,7 +605,7 @@ for iCol = 1:4
 end
 end
 
-of                          = .05;
+of                          = .06;
 axCB                        = axes('Position',[clm(1)-of row(2)+of .001 .1]);
 axCB.Visible                = 'off';
 colormap(axCB, col(31:70,:))
@@ -646,17 +645,23 @@ text(clm(1)-of,.5, 'e', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight
 text(clm(2)-of,.5, 'f', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 text(clm(3)-of,.5, 'g', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 text(clm(4)-of,.5, 'h', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
-text(clm(1)+.04,of, 'M1', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
-text(clm(1)+.16,of, 'M2', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
+% text(clm(1)+.04,of, 'M1', 'Parent', ax0, 'FontSize', txtsz+2, 'Color', 'k', 'FontWeight', 'bold')
+% text(clm(1)+.16,of, 'M2', 'Parent', ax0, 'FontSize', txtsz+2, 'Color', 'k', 'FontWeight', 'bold')
 
 of = .015;
-text(clm(1)+of, .985, 'Figure vs Control', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
-text(clm(2)+of, .985, 'Coherence8 vs Coherence12', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
-text(clm(3)+of, .985, 'Hit vs Miss', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
-text(clm(4)+of, .985, 'Miss vs Correct rejection', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(1)+of, .985, 'Figure vs Control', 'Parent', ax0, 'FontSize', txtsz+2, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(2)+of, .985, 'Coherence8 vs Coherence12', 'Parent', ax0, 'FontSize', txtsz+2, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(3)+of, .985, 'Hit vs Miss', 'Parent', ax0, 'FontSize', txtsz+2, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(4)+of, .985, 'Miss vs Correct rejection', 'Parent', ax0, 'FontSize', txtsz+2, 'Color', 'k', 'FontWeight', 'bold')
 
-addpath /Users/fschneider/Documents/MATLAB/altmany-export_fig-8b0ba13
+addpath /Users/fschneider/Documents/MATLAB/altmany-export_fig-d7671fe
 export_fig([dest_dir '/FIG3_roc_pop_pooled'], '-r400',f);
+% % exportgraphics(f,[dest_dir '/FIG3_roc_pop_pooled.pdf'],'ContentType','vector','Resolution',400)
+
+set(f,'Units','Inches');
+pos = get(f,'Position');
+set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
+print(f, [dest_dir 'FIG3_roc_pop_pooled'], '-dpdf', '-r400'); 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -705,7 +710,7 @@ npHMd   = fdrP([npHMd(1,:), npHMd(2,:)]);
 npMC    = fdrP([npMC(1,:), npMC(2,:)]);
 npMCd   = fdrP([npMCd(1,:), npMCd(2,:)]);
 
-f           = figure('Units', 'normalized', 'Position', [0 0 .8 1]); axis off
+f           = figure('Units', 'normalized', 'Position', [0 0 1 1]); axis off
 set(gcf,'color', [1 1 1]);
 cm          = [[0 0 .9]; [0 .9 0]; [.9 0 0]];
 alp         = .7;
@@ -739,16 +744,17 @@ for iAn = 1:2
         Yof                 = axO.YLim(2)/5;
         maxV                = max([h1.Values,h2.Values]);
         axO.YLim            = [0 maxV+(2*Yof)];
+        axO.FontSize        = txtsz;
         
         line([.5 .5],[axO.YLim], 'LineStyle', ':', 'LineWidth', 2, 'Color', 'k')
         fill([nanmedian(vec1)-axO.XLim(2)/50 nanmedian(vec1) nanmedian(vec1)+axO.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [0 0 0], 'FaceAlpha', alp)
         fill([nanmedian(vec2)-axO.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axO.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
         plotStar(npF, iAn, iFi, nanmedian(vec1), axO.XLim(2)/50, maxV+Yof, [0 0 0])
         plotStar(pF, iAn, iFi, nanmedian(vec2), axO.XLim(2)/50, maxV+Yof, [1 0 0])
-        testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
+%         testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
         
         if iAn == 1 && iFi == 1
-            lg = legend('n.s.','p < .01', 'Location','Northwest');
+            lg = legend('Unresponsive','Modulated', 'Location','Northwest');
             lg.FontSize = 8;
             legend boxoff
         end
@@ -771,13 +777,14 @@ for iAn = 1:2
         Yof                 = axD.YLim(2)/5;
         maxV                = max([h1.Values,h2.Values]);
         axD.YLim            = [0 maxV+(2*Yof)];
-        
+        axD.FontSize        = txtsz;
+    
         line([.5 .5],[axD.YLim], 'LineStyle', ':', 'LineWidth', 2, 'Color', 'k')
         fill([nanmedian(vec1)-axD.XLim(2)/50 nanmedian(vec1) nanmedian(vec1)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [0 0 0], 'FaceAlpha', alp)
         fill([nanmedian(vec2)-axD.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
         plotStar(npFd, iAn, iFi, nanmedian(vec1), axD.XLim(2)/50, maxV+Yof, [0 0 0])
         plotStar(pFd, iAn, iFi, nanmedian(vec2), axD.XLim(2)/50, maxV+Yof, [1 0 0])
-        testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
+%         testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
         
         if iAn == 2 && iFi == 2
             axO.XAxis.Visible = 'off';
@@ -807,13 +814,14 @@ for iAn = 1:2
         Yof                 = axO.YLim(2)/5;
         maxV                = max([h1.Values,h2.Values]);
         axO.YLim            = [0 maxV+(2*Yof)];
+        axO.FontSize        = txtsz;
         
         line([.5 .5],[axO.YLim], 'LineStyle', ':', 'LineWidth', 2, 'Color', 'k')
         fill([nanmedian(vec1)-axD.XLim(2)/50 nanmedian(vec1) nanmedian(vec1)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [0 0 0], 'FaceAlpha', alp)
         fill([nanmedian(vec2)-axD.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
         plotStar(npC, iAn, iFi, nanmedian(vec1), axO.XLim(2)/50, maxV+Yof, [0 0 0])
         plotStar(pC, iAn, iFi, nanmedian(vec2), axO.XLim(2)/50, maxV+Yof, [1 0 0])
-        testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
+%         testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
         
         if iAn == 1 && iFi == 1
             axD     = axes('Position',[clm(2) row(2) dim]); hold on
@@ -833,13 +841,14 @@ for iAn = 1:2
         Yof                 = axD.YLim(2)/5;
         maxV                = max([h1.Values,h2.Values]);
         axD.YLim            = [0 maxV+Yof];
-        
+        axD.FontSize        = txtsz;
+       
         line([.5 .5],[axD.YLim], 'LineStyle', ':', 'LineWidth', 2, 'Color', 'k')
         fill([nanmedian(vec1)-axD.XLim(2)/50 nanmedian(vec1) nanmedian(vec1)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [0 0 0], 'FaceAlpha', alp)
         fill([nanmedian(vec2)-axD.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
         plotStar(npCd, iAn, iFi, nanmedian(vec1), axD.XLim(2)/50, maxV+Yof, [0 0 0])
         plotStar(pCd, iAn, iFi, nanmedian(vec2), axD.XLim(2)/50, maxV+Yof, [1 0 0])
-        testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
+%         testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
         
         if iAn == 2 && iFi == 2
             axO.XAxis.Visible = 'off';
@@ -869,13 +878,14 @@ for iAn = 1:2
         Yof                 = axO.YLim(2)/5;
         maxV                = max([h1.Values,h2.Values]);
         axO.YLim            = [0 maxV+(2*Yof)];
+        axO.FontSize        = txtsz;
         
         line([.5 .5],[axO.YLim], 'LineStyle', ':', 'LineWidth', 2, 'Color', 'k')
         fill([nanmedian(vec1)-axO.XLim(2)/50 nanmedian(vec1) nanmedian(vec1)+axO.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [0 0 0], 'FaceAlpha', alp)
         fill([nanmedian(vec2)-axO.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axO.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
         plotStar(npHM, iAn, iFi, nanmedian(vec1), axO.XLim(2)/50, maxV+Yof, [0 0 0])
         plotStar(pHM, iAn, iFi, nanmedian(vec2), axO.XLim(2)/50, maxV+Yof, [1 0 0])
-        testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
+%         testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
         
         if iAn == 1 && iFi == 1
             axD     = axes('Position',[clm(3) row(2) dim]); hold on
@@ -895,13 +905,14 @@ for iAn = 1:2
         Yof                 = axD.YLim(2)/5;
         maxV                = max([h1.Values,h2.Values]);
         axD.YLim            = [0 maxV+(2*Yof)];
-        
+        axD.FontSize        = txtsz;
+
         line([.5 .5],[axD.YLim], 'LineStyle', ':', 'LineWidth', 2, 'Color', 'k')
         fill([nanmedian(vec1)-axD.XLim(2)/50 nanmedian(vec1) nanmedian(vec1)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [0 0 0], 'FaceAlpha', alp)
         fill([nanmedian(vec2)-axD.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
         plotStar(npHMd, iAn, iFi, nanmedian(vec1), axD.XLim(2)/50, maxV+Yof, [0 0 0])
         plotStar(pHMd, iAn, iFi, nanmedian(vec2), axD.XLim(2)/50, maxV+Yof, [1 0 0])
-        testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
+%         testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
         
         if iAn == 2 && iFi == 2
             axO.XAxis.Visible = 'off';
@@ -930,14 +941,15 @@ for iAn = 1:2
         axO.YLabel.String   = {'Onset';'No. units'};
         Yof                 = axO.YLim(2)/5;
         maxV                = max([h1.Values,h2.Values]);
-        axO.YLim            = [0 maxV+(2*Yof)];
-        
+        axO.YLim            = [0 maxV+(2*Yof)];        
+        axO.FontSize        = txtsz;
+       
         line([.5 .5],[axO.YLim], 'LineStyle', ':', 'LineWidth', 2, 'Color', 'k')
         fill([nanmedian(vec1)-axO.XLim(2)/50 nanmedian(vec1) nanmedian(vec1)+axO.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [0 0 0], 'FaceAlpha', alp)
         fill([nanmedian(vec2)-axO.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axO.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
         plotStar(npMC, iAn, iFi, nanmedian(vec1), axO.XLim(2)/50, maxV+Yof, [0 0 0])
         plotStar(pMC, iAn, iFi, nanmedian(vec2), axO.XLim(2)/50, maxV+Yof, [1 0 0])
-        testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
+%         testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
         
         if iAn == 1 && iFi == 1
             axD     = axes('Position',[clm(4) row(2) dim]); hold on
@@ -957,13 +969,14 @@ for iAn = 1:2
         Yof                 = axD.YLim(2)/5;
         maxV                = max([h1.Values,h2.Values]);
         axD.YLim            = [0 maxV+(2*Yof)];
-        
+        axD.FontSize        = txtsz;
+
         line([.5 .5],[axD.YLim], 'LineStyle', ':', 'LineWidth', 2, 'Color', 'k')
         fill([nanmedian(vec1)-axD.XLim(2)/50 nanmedian(vec1) nanmedian(vec1)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [0 0 0], 'FaceAlpha', alp)
         fill([nanmedian(vec2)-axD.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
         plotStar(npMCd, iAn, iFi, nanmedian(vec1), axD.XLim(2)/50, maxV+Yof, [0 0 0])
         plotStar(pMCd, iAn, iFi, nanmedian(vec2), axD.XLim(2)/50, maxV+Yof, [1 0 0])
-        testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
+%         testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
         
         if iAn == 2 && iFi == 2
             axO.XAxis.Visible = 'off';
@@ -978,33 +991,37 @@ end
 
 of = .05;
 ax0 = axes('Position',[0 0 1 1],'Visible','off');
-text(clm(1)-of,.99, 'a', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
-text(clm(2)-of,.99, 'b', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
-text(clm(3)-of,.99, 'c', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
-text(clm(4)-of,.99, 'd', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(1)-of,.98, 'a', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(2)-of,.98, 'b', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(3)-of,.98, 'c', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(4)-of,.98, 'd', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 
 annotation('line',[.05 .05],[row(1)+.1-.03 row(2)+.03], 'LineWidth', 2, 'Color', 'k')
 annotation('line',[.05 .05],[row(3)+.1-.03 row(4)+.03], 'LineWidth', 2, 'Color', 'k')
 annotation('line',[.05 .05],[row(5)+.1-.03 row(6)+.03], 'LineWidth', 2, 'Color', 'k')
 annotation('line',[.05 .05],[row(7)+.1-.03 row(8)+.03], 'LineWidth', 2, 'Color', 'k')
-text(.035,row(2)+.09, 'ANT', 'Parent', ax0, 'FontSize', 14, 'Color', 'k','Rotation',90)
-text(.035,row(4)+.09, 'POS', 'Parent', ax0, 'FontSize', 14, 'Color', 'k','Rotation',90)
-text(.02,row(3)+.09, 'M1', 'Parent', ax0, 'FontSize', 20, 'Color', 'k', 'FontWeight', 'bold','Rotation',90)
-text(.035,row(6)+.09, 'ANT', 'Parent', ax0, 'FontSize', 14, 'Color', 'k','Rotation',90)
-text(.035,row(8)+.09, 'POS', 'Parent', ax0, 'FontSize', 14, 'Color', 'k','Rotation',90)
-text(.02,row(7)+.09, 'M2', 'Parent', ax0, 'FontSize', 20, 'Color', 'k', 'FontWeight', 'bold','Rotation',90)
+text(.035,row(2)+.09, 'ANT', 'Parent', ax0, 'FontSize', txtsz+2, 'Color', 'k','Rotation',90)
+text(.035,row(4)+.09, 'POS', 'Parent', ax0, 'FontSize', txtsz+2, 'Color', 'k','Rotation',90)
+text(.02,row(3)+.09, 'M1', 'Parent', ax0, 'FontSize', txtsz+6, 'Color', 'k', 'FontWeight', 'bold','Rotation',90)
+text(.035,row(6)+.09, 'ANT', 'Parent', ax0, 'FontSize', txtsz+2, 'Color', 'k','Rotation',90)
+text(.035,row(8)+.09, 'POS', 'Parent', ax0, 'FontSize', txtsz+2, 'Color', 'k','Rotation',90)
+text(.02,row(7)+.09, 'M2', 'Parent', ax0, 'FontSize', txtsz+6, 'Color', 'k', 'FontWeight', 'bold','Rotation',90)
 
 of = .015;
-text(clm(1)+of, .985, 'Fig vs Ctr', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
-text(clm(2)+of, .985, 'Coh8 vs Coh12', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
-text(clm(3)+of, .985, 'HI vs MI', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
-text(clm(4)+of, .985, 'MI vs CR', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(1)+of, .985, 'Figure vs Control', 'Parent', ax0, 'FontSize', txtsz+2, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(2)+of, .985, 'Coherence8 vs Coherence12', 'Parent', ax0, 'FontSize', txtsz+2, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(3)+of, .985, 'Hit vs Miss', 'Parent', ax0, 'FontSize', txtsz+2, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(4)+of, .985, 'Miss vs Correct rejection', 'Parent', ax0, 'FontSize', txtsz+2, 'Color', 'k', 'FontWeight', 'bold')
 
 % addpath X:\Felix\Scripts\Stuff\export_fig-master
 % dest_dir = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\';
 export_fig([dest_dir 'FIG3_roc'], '-r400',f);
+% exportgraphics(f,[dest_dir '/FIG3_roc.pdf'],'ContentType','vector','Resolution',300)
 
-
+set(f,'Units','Inches');
+pos = get(f,'Position');
+set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
+print(f, [dest_dir 'FIG3_roc'], '-dpdf', '-r400'); 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1060,13 +1077,13 @@ nPHMd   = fdr(nPHMd);
 nPMC    = fdr(nPMC);
 nPMCd   = fdr(nPMCd);
 
-f           = figure('Units', 'normalized', 'Position', [0 0 .8 1]); axis off
+f           = figure('Units', 'normalized', 'Position', [0 0 1 1]); axis off
 set(gcf,'color', [1 1 1]);
 alp         = .7;
 clm         = linspace(.08, .79, 4);
 row         = fliplr(linspace(.05, .76, 4));
 dim         = [.2 .2];
-txtsz       = 14;
+txtsz       = 18;
 
 for iAn = 1:2    
        bin         = linspace(0, 1,50);
@@ -1093,10 +1110,10 @@ for iAn = 1:2
         fill([nanmedian(vec2)-axO.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axO.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
         plotStar(nPF, 1, iAn, nanmedian(vec1), axO.XLim(2)/50, maxV+Yof, [0 0 0])
         plotStar(PF, 1, iAn, nanmedian(vec2), axO.XLim(2)/50, maxV+Yof, [1 0 0])
-        testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
+%         testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
         
         if iAn == 1 
-            lg = legend('n.s.','p < .01', 'Location','Northwest');
+            lg = legend('Unresponsive','Modulated', 'Location','Northwest');
             lg.FontSize = 8;
             legend boxoff
         end
@@ -1121,7 +1138,7 @@ for iAn = 1:2
         fill([nanmedian(vec2)-axD.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
         plotStar(nPFd, 1, iAn, nanmedian(vec1), axD.XLim(2)/50, maxV+Yof, [0 0 0])
         plotStar(PFd, 1, iAn, nanmedian(vec2), axD.XLim(2)/50, maxV+Yof, [1 0 0])
-        testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
+%         testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
         
         if iAn == 2 && iFi == 2
             axO.XAxis.Visible = 'off';
@@ -1153,7 +1170,7 @@ for iAn = 1:2
         fill([nanmedian(vec2)-axD.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
         plotStar(nPC, 1, iAn, nanmedian(vec1), axO.XLim(2)/50, maxV+Yof, [0 0 0])
         plotStar(PC, 1, iAn, nanmedian(vec2), axO.XLim(2)/50, maxV+Yof, [1 0 0])
-        testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
+%         testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
         
         if iAn == 1
             axD     = axes('Position',[clm(2) row(2) dim]); hold on
@@ -1175,7 +1192,7 @@ for iAn = 1:2
         fill([nanmedian(vec2)-axD.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
         plotStar(nPCd, 1, iAn, nanmedian(vec1), axD.XLim(2)/50, maxV+Yof, [0 0 0])
         plotStar(PCd, 1, iAn, nanmedian(vec2), axD.XLim(2)/50, maxV+Yof, [1 0 0])
-        testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
+%         testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
         
         if iAn == 2 && iFi == 2
             axO.XAxis.Visible = 'off';
@@ -1208,7 +1225,7 @@ for iAn = 1:2
         fill([nanmedian(vec2)-axO.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axO.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
         plotStar(nPHM, 1, iAn, nanmedian(vec1), axO.XLim(2)/50, maxV+Yof, [0 0 0])
         plotStar(PHM, 1, iAn, nanmedian(vec2), axO.XLim(2)/50, maxV+Yof, [1 0 0])
-        testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
+%         testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
         
         if iAn == 1 
             axD     = axes('Position',[clm(3) row(2) dim]); hold on
@@ -1230,7 +1247,7 @@ for iAn = 1:2
         fill([nanmedian(vec2)-axD.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
         plotStar(nPHMd, 1, iAn, nanmedian(vec1), axD.XLim(2)/50, maxV+Yof, [0 0 0])
         plotStar(PHMd, 1, iAn, nanmedian(vec2), axD.XLim(2)/50, maxV+Yof, [1 0 0])
-        testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
+%         testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
         
         if iAn == 2
             axO.XAxis.Visible = 'off';
@@ -1262,7 +1279,7 @@ for iAn = 1:2
         fill([nanmedian(vec2)-axO.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axO.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
         plotStar(nPMC, 1, iAn, nanmedian(vec1), axO.XLim(2)/50, maxV+Yof, [0 0 0])
         plotStar(PMC, 1, iAn, nanmedian(vec2), axO.XLim(2)/50, maxV+Yof, [1 0 0])
-        testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
+%         testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axO.XLim(2)/50)
         
         if iAn == 1 
             axD     = axes('Position',[clm(4) row(2) dim]); hold on
@@ -1284,7 +1301,7 @@ for iAn = 1:2
         fill([nanmedian(vec2)-axD.XLim(2)/50 nanmedian(vec2) nanmedian(vec2)+axD.XLim(2)/50],[maxV+Yof/2 maxV+Yof/4 maxV+Yof/2], [1 0 0], 'FaceAlpha', alp, 'EdgeColor', [1 0 0])
         plotStar(nPMCd, 1, iAn, nanmedian(vec1), axD.XLim(2)/50, maxV+Yof, [0 0 0])
         plotStar(PMCd, 1, iAn, nanmedian(vec2), axD.XLim(2)/50, maxV+Yof, [1 0 0])
-        testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
+%         testDist(vec1,vec2,  maxV+(1.6*Yof), maxV+(1.95*Yof), axD.XLim(2)/50)
         
         if iAn == 2
             axO.XAxis.Visible = 'off';
@@ -1307,13 +1324,18 @@ text(.02,row(2)+.2, 'M1', 'Parent', ax0, 'FontSize', 20, 'Color', 'k', 'FontWeig
 text(.02,row(4)+.2, 'M2', 'Parent', ax0, 'FontSize', 20, 'Color', 'k', 'FontWeight', 'bold','Rotation',90)
 
 of = .015;
-text(clm(1)+of, .985, 'Fig vs Ctr', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
-text(clm(2)+of, .985, 'Coh8 vs Coh12', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
-text(clm(3)+of, .985, 'HI vs MI', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
-text(clm(4)+of, .985, 'MI vs CR', 'Parent', ax0, 'FontSize', 14, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(1)+of, .985, 'Figure vs Control', 'Parent', ax0, 'FontSize', txtsz+2, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(2)+of, .985, 'Coherence8 vs Coherence12', 'Parent', ax0, 'FontSize', txtsz+2, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(3)+of, .985, 'Hit vs Miss', 'Parent', ax0, 'FontSize', txtsz+2, 'Color', 'k', 'FontWeight', 'bold')
+text(clm(4)+of, .985, 'Miss vs Correct rejection', 'Parent', ax0, 'FontSize', txtsz+2, 'Color', 'k', 'FontWeight', 'bold')
 
 export_fig([dest_dir 'FIG3_roc_pooled'], '-r400',f);
+% exportgraphics(f,[dest_dir '/FIG3_roc_pooled.pdf'],'ContentType','vector','Resolution',300)
 
+set(f,'Units','Inches');
+pos = get(f,'Position');
+set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
+print(f, [dest_dir 'FIG3_roc_pooled'], '-dpdf', '-r400'); 
 %% Helper Functions
 
 function out = fdrP(vec)

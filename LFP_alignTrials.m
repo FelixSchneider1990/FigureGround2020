@@ -16,10 +16,10 @@ aSIG(ind,:)     = [];
 aTFA(:,:,ind)   = [];
 
 pow          	= abs(aTFA).^2;                                 % Power
-itpc          	= getITPC(aTFA);                                % Inter-trial phase coherence
+% itpc          	= getITPC(aTFA);                                % Inter-trial phase coherence
 
 % Output
 out.trAlign     = aSIG;
 out.trPow       = pow;
-out.ITPC        = itpc;
+% out.ITPC        = itpc;
 end

@@ -46,7 +46,7 @@ l     	= 1:length(CI);
 len   	= [l fliplr(l)];
 sem_plt = [CI(1,:) fliplr(CI(2,:))];
 
-f = figure('Units', 'normalized', 'Position', [0 0 .4 .6]); set(gcf,'color', [1 1 1]);
+f = figure('Units', 'normalized', 'Position', [0 0 .6 .6]); set(gcf,'color', [1 1 1]);
 ax1 = subplot(6,4,[1 2 5 6]);hold on
 imagesc(avgMUA(:,idx))
 colormap(gray(256));
@@ -152,40 +152,40 @@ ax4.Position(1) = .565;
 ax4.Position(2) = .41;
 ax4.YAxis(2).Color = 'r';
 
-load('/Users/fschneider/OneDrive - Newcastle University/BR_control/tfa_BR.mat')
-fr = round(linspace(100,7,100));
-ax5 = subplot(6,4,[19 20 23 24]);
-map             = 10*log10(alltfa);
-imagesc(flipud(mean(map(:,501:1000,:),3)))
-line([500 500],[-100 500], 'LineWidth', 2, 'LineStyle', ':', 'Color', 'k')
-ax5.XTick        = [100 200 300 400 500];
-ax5.XTickLabel   = {'-400', '-300','-200','-100', '0'};
-ax5.FontSize     = 14;
-% ax5.YAxis.Visible = 'off';
-ax5.XLabel.String = 'Time [ms]';
-ax5.YLabel.String = 'Frequency [Hz]';
-ax5.Position(1) = .565;
-ax5.Position(2) = .08;
-ax5.YTick            = [1 25 50 75 100];
-ax5.YTickLabel       = [fr(1) fr(25) fr(50) fr(75) fr(100)];
+% load('/Users/fschneider/OneDrive - Newcastle University/BR_control/tfa_BR.mat')
+% fr = round(linspace(100,7,100));
+% ax5 = subplot(6,4,[19 20 23 24]);
+% map             = 10*log10(alltfa);
+% imagesc(flipud(mean(map(:,501:1000,:),3)))
+% line([500 500],[-100 500], 'LineWidth', 2, 'LineStyle', ':', 'Color', 'k')
+% ax5.XTick        = [100 200 300 400 500];
+% ax5.XTickLabel   = {'-400', '-300','-200','-100', '0'};
+% ax5.FontSize     = 14;
+% % ax5.YAxis.Visible = 'off';
+% ax5.XLabel.String = 'Time [ms]';
+% ax5.YLabel.String = 'Frequency [Hz]';
+% ax5.Position(1) = .565;
+% ax5.Position(2) = .08;
+% ax5.YTick            = [1 25 50 75 100];
+% ax5.YTickLabel       = [fr(1) fr(25) fr(50) fr(75) fr(100)];
+% 
+% r           = rectangle('Position',[201 1 200 70]);
+% r.LineWidth = 2;
+% r.LineStyle = '--';
+% r           = rectangle('Position',[201 75 200 25]);
+% r.LineWidth = 2;
+% r.LineStyle = '--';
 
-r           = rectangle('Position',[201 1 200 70]);
-r.LineWidth = 2;
-r.LineStyle = '--';
-r           = rectangle('Position',[201 75 200 25]);
-r.LineWidth = 2;
-r.LineStyle = '--';
-
-cb              = colorbar(ax5);
-cb.Label.String = 'Power [dB]';
-cb.FontSize     = 12;
-% cb.Ticks        = [-1 -.5 0 .5 1];
-cb.Position(1)  = .35;
-cb.Position(4)  = cb.Position(4)/2;
-cb.Position(2)  = ax5.Position(2) + (ax5.Position(4)/4);
-colormap(gca,[[1 1 1];jet(256)]);
-caxis(ax5,[-1 1])
-box off 
+% cb              = colorbar(ax5);
+% cb.Label.String = 'Power [dB]';
+% cb.FontSize     = 12;
+% % cb.Ticks        = [-1 -.5 0 .5 1];
+% cb.Position(1)  = .35;
+% cb.Position(4)  = cb.Position(4)/2;
+% cb.Position(2)  = ax5.Position(2) + (ax5.Position(4)/4);
+% colormap(gca,[[1 1 1];jet(256)]);
+% caxis(ax5,[-1 1])
+% box off 
 
 cb2              = colorbar(ax1);
 cb2.Label.String = 'MUA [norm]';
@@ -193,7 +193,7 @@ cb2.FontSize     = 12;
 % cb2.Ticks        = [0 .25 .5 .75 1];
 cb2.Position(1)  = .15;
 cb2.Position(4)  = cb2.Position(4)/2;
-cb2.Position(2)  = ax5.Position(2) + (ax5.Position(4)/4);
+cb2.Position(2)  = .15;
 
 cb3              = colorbar(ax2);
 cb3.Label.String = 'LFP [uV]';
@@ -201,15 +201,19 @@ cb3.FontSize     = 12;
 % cb2.Ticks        = [0 .25 .5 .75 1];
 cb3.Position(1)  = .25;
 cb3.Position(4)  = cb3.Position(4)/2;
-cb3.Position(2)  = ax5.Position(2) + (ax5.Position(4)/4);
+cb3.Position(2)  = .15;
 
 ax0 = axes('Position',[0 0 1 1],'Visible','off');
-text(0,.98, 'a', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
-text(0,.69, 'b', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
-text(.47,.36, 'c', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(0.01,.97, 'a', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(0.01,.67, 'b', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+% text(.47,.36, 'c', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 
-addpath /Users/fschneider/Documents/MATLAB/altmany-export_fig-8b0ba13
+addpath /Users/fschneider/Documents/MATLAB/altmany-export_fig-d7671fe
 dest_dir = '/Users/fschneider/ownCloud/NCL_revision/Figures/';
 export_fig([dest_dir 'SFIG_BRcontrol'], '-r400',f);
+% exportgraphics(f,[dest_dir 'SFIG_BRcontrol.pdf'],'ContentType','vector','Resolution',300)
 
-
+set(f,'Units','Inches');
+pos = get(f,'Position');
+set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
+print(f, [dest_dir 'SFIG_BRcontrol'], '-dpdf', '-r400'); 

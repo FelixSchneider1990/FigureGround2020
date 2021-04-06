@@ -18,19 +18,16 @@ clearvars -except muaeE muaeD lfpE lfpD
 % muaeD = muae;
 % clear muae
 
-%%% CONTROL %%%
-f           = figure('Units', 'normalized', 'Position', [0 0 .8 1]); set(gcf,'color', [1 1 1]);
-ax0         = axes('Position',[0 0 1 1],'Visible','off');
+dest_dir    = '/Users/fschneider/ownCloud/NCL_revision/Figures/raw/';
 Fs          = 1000;                                                  	% Sampling frequency
 T           = 1/Fs;                                                    	% Sampling period
 L           = 2250;                                                   	% Length of signal
 t           = (0:L-1)*T;                                             	% Time vector
 frfft       = Fs*(0:(L/2))/L;
-col         = [[0 0 0]; [.65 .65 .65]];
-lw          = 1.5;
+alph       	= .01;
+
 indxR       = 201:400;                                                  % corresponds to -300:-100ms to decision
 indx        = 401:600;                                                  % cooresponds to 200:400ms after figure onset
-alph        = .01;
 nRep        = 1000;                                                     % No. repetitions
 useSEM      = true;
 
@@ -112,8 +109,163 @@ for iAn = 1:2
 end
 
 %% PLOT FIG2 %%%
+close all
+f                   = figure('Units', 'normalized', 'Position', [0 0 .6 1]); set(gcf,'color', [1 1 1]);
+ax0                 = axes('Position',[0 0 1 1],'Visible','off');
+rows                = [0.43    0.6    0.83];
+lw                  = 1.5;
 
-axA = axes('Position',[.075 .77 .35 .2]); hold on
+%%% Site coordinates %%%
+typ                 = 'muae';
+alp                 = .7;
+
+freqStart           = 180;                                          % Tuning low freq [Hz]
+steps               = 14;                                           % No of desired tones
+PT(1)               = freqStart;                                    % Starting frequency [Hz]
+for i = 2:steps                                                 % For no of tones...
+    PT(i)           =  PT(i-1)*2^(1/2);                             % 1/2 octave steps
+end
+frex                = round(PT);
+    
+for iAn = 1:2
+    par = []; mfr_mat = []; mlat_mat = []; cc = 0;
+    
+    if iAn == 1
+        animalID        = 'Eric';
+        axC             = axes('Position',[.05 .11 .25 .2]); hold on
+        axC.Title.String= 'M1';
+    else
+        animalID        = 'Dollar';
+        axC             = axes('Position',[.22 .11 .25 .2]); hold on
+        axC.Title.String        = 'M2';
+    end
+    
+    load([dest_dir 'tMap_' animalID '_' typ  '.mat']);
+    imagesc(1:size(mfr_mat,1),-18:-1, flipud(mfr_mat));
+    caxis([floor(log(frex(1))) (ceil(max(max(mfr_mat))*10)/10)+.3])
+
+    if iAn == 1
+        sc = scatter([ML{iAn}],[-AP{iAn}]);
+        axC.YLim        = [-18 -5];
+        axC.YLim        = [-18 -5];
+    else
+        sc              = scatter([ML{iAn}],[-AP{iAn}]);
+        axC.YLim        = [-16 -3];
+    end
+    axC.YAxis.Visible   = 'off';
+    axC.XAxis.Visible   = 'off';
+    axC.Title.FontSize  = 12;
+    
+    if iAn == 1
+        axC.Title.Position(1) = 8.5;
+    else
+        axC.Title.Position(1) = 7.5;
+    end
+
+    sc.SizeData         = 20;
+    sc.Marker           = '^';
+    sc.MarkerFaceColor  = [1 0 0];
+    sc.MarkerEdgeColor  = [1 0 0];
+    
+    colormap([[1 1 1]; gray(256)])
+    
+    cm                  = gray(256);
+    axCB                = axes('Position',[.175 .1 .15 .001]);
+    axCB.Visible        = 'off';
+    colormap(axCB, cm)
+    cb                  = colorbar(axCB);
+    cb.Location         = 'southoutside';
+    cb.Color            = [0 0 0];
+    cb.Label.String     = 'Best frequency [Hz]';
+    cb.FontSize         = 12;
+    caxis([floor(log(frex(1))) ceil(log(frex(11)))])
+    cb.Ticks            = [log(frex(1)),log(frex(7)),log(frex(11))];
+    cb.TickLabels       = {num2str(frex(1)), num2str(frex(7)), ['>' num2str(frex(11))]};
+end
+
+%%% FIGURE ONSET %%%
+col = [[0 0 0]; [1 0 0]];
+SEM = []; m = []; sd = [];
+mID = {'M1','M2'};
+
+for kk = 1:2
+    if kk == 1
+        axB = axes('Position',[.1 rows(end-1) .3 .15]); hold on
+        ofst = .12;
+    else
+        axB = axes('Position',[.1 rows(end-2) .3 .15]); hold on
+        ofst = .12;
+    end
+    
+    if useSEM
+        m       = mean(CTR{kk});
+        sd      = std(CTR{kk});
+        n       = size(CTR{kk},1);
+        sem     = sd/(sqrt(n));
+        CI      = [m+sem/2; m-sem/2];
+    else
+        CI      = bootci(nRep,@mean,CTR{kk});
+    end
+    l           = 1:length(CI);
+    len         = [l fliplr(l)];
+    ci          = [CI(1,:) fliplr(CI(2,:))];
+    fill(len,ci,col(1,:)*0.7,'EdgeColor','none', 'FaceAlpha', .3);
+    hold on
+    pC = plot(mean(CTR{kk}), 'Color', col(1,:), 'LineWidth', lw);
+    plot(1:length(SIG{kk}), SIG{kk}+ofst,  'Color', [.5 .5 .5], 'LineWidth', 3);
+    
+    if useSEM
+        m       = mean(FIG{kk});
+        sd      = std(FIG{kk});
+        n       = size(FIG{kk},1);
+        sem     = sd/(sqrt(n));
+        CI      = [m+sem/2; m-sem/2];
+    else
+        CI      = bootci(nRep,@mean,FIG{kk});
+    end
+    l           = 1:length(CI);
+    len         = [l fliplr(l)];
+    ci          = [CI(1,:) fliplr(CI(2,:))];
+    fill(len,ci,col(2,:)*0.7,'EdgeColor','none', 'FaceAlpha', .3);
+    hold on
+    pF = plot(mean(FIG{kk}), 'Color', col(2,:), 'LineWidth', lw);
+    
+    axB.XLim            = [1 600];
+    axB.XTick           = [1 200 400 600];
+    axB.XTickLabel      = {'-200','0','200','400'};
+    axB.XLabel.String   = 'Time [ms]';
+    axB.YLabel.String   = {mID{kk};'MUA [norm]'};
+    axB.FontSize        = 14;
+    line([200 200],[-1 2], 'LineStyle', '--', 'LineWidth',lw, 'Color','k')
+    
+    if kk == 1
+        axB.YLim = [1.01 1.12];
+        of = diff(axB.YLim)*.04;
+        lv = axB.YLim(1)+of;
+        axB.XAxis.Visible = 'off';
+    else
+        axB.YLim = [1.01 1.12];
+        of = diff(axB.YLim)*.04;
+        lv = axB.YLim(1)+of;
+    end
+    
+    seq = [lv lv+of lv+of lv lv lv-of lv-of lv];
+    ch  = [0 5 45 50];
+    for ic = 1:12
+        fi  = fill([ch fliplr(ch)],seq, [0 0 0], 'LineStyle','none');
+        ch  = ch+50;
+    end
+end
+
+lg              = legend([pC, pF],{'CTR','FIG'});
+lg.FontSize     = 10;
+lg.Position (2) = rows(end-1) + .11;
+lg.Position (1) = .12;
+lg.Box          = 'off';
+
+%%% CONTROL PLOT
+axA         = axes('Position',[.1 rows(end) .85 .15]); hold on
+col         = [[0 0 0]; [.65 .65 .65]];
 
 if useSEM
     m       = mean(fullCTR{1});
@@ -130,7 +282,7 @@ len         = [l fliplr(l)];
 ci          = [CI(1,:) fliplr(CI(2,:))];
 fill(len,ci,col(1,:)*0.7,'EdgeColor','none', 'FaceAlpha', .3);
 hold on
-plot(mean(fullCTR{1}), 'Color', col(1,:), 'LineWidth', lw)
+pM1 = plot(mean(fullCTR{1}), 'Color', col(1,:), 'LineWidth', lw);
 
 if useSEM
     m       = mean(fullCTR{2});
@@ -147,22 +299,27 @@ len         = [l fliplr(l)];
 ci          = [CI(1,:) fliplr(CI(2,:))];
 fill(len,ci,col(2,:)*0.7,'EdgeColor','none', 'FaceAlpha', .3);
 hold on
-plot(mean(fullCTR{2}), 'Color', col(2,:), 'LineWidth', lw)
+pM2 = plot(mean(fullCTR{2}), 'Color', col(2,:), 'LineWidth', lw);
 
 axA.YTick           = [1 1.1 1.2];
-axA.YLim            = [.97 1.25];
+axA.YLim            = [.97 1.3];
 axA.XTick           = [500 2000 3500];
 axA.XTickLabel      = {'0','1500','3000'};
 axA.XLabel.String   = 'Time [ms]';
 axA.YLabel.String   = 'MUA [norm]';
 axA.FontSize        = 14;
 
-text(200,1.2, 'M1', 'FontSize', 12, 'Color', col(1,:), 'FontWeight', 'bold')
-text(200,1.185, 'M2', 'FontSize', 12, 'Color', col(2,:), 'FontWeight', 'bold')
 line([500 500],[0 2], 'LineStyle', '--', 'LineWidth',lw, 'Color','k')
 line([3500 3500],[0 2], 'LineStyle', '--', 'LineWidth',lw, 'Color','k')
 
-axI = axes('Position',[.15 .92 .075 .05]); hold on
+lg              = legend([pM1, pM2],{'M1','M2'});
+lg.FontSize     = 10;
+lg.Position (2) = rows(end) + .065;
+lg.Position (1) = .12;
+lg.Box          = 'off';
+
+
+axI = axes('Position',[.29 rows(end)+.11 .1 .05]); hold on
 plot(mean(fullCTR{1}(:,1900:2100)), 'Color', col(1,:), 'Linewidth', lw);
 plot(mean(fullCTR{2}(:,1900:2100)), 'Color', col(2,:), 'Linewidth', lw);
 axI.YLim            = [1.02 1.12];
@@ -173,6 +330,7 @@ axI.XTickLabel      = {'1400','1600'};
 axI.XLabel.String   = 'Time [ms]';
 axI.YAxis.Visible   = 'off';
 axI.FontSize        = 12;
+axI.YLim(2)         = 1.10;
 
 of                  = diff(axI.YLim)*.1;
 lv                  = axI.YLim(2)-of;
@@ -183,10 +341,11 @@ for ic = 1:4
     ch      = ch+50;
 end
 
-annotation('line',[.17 .187],[.98 .98],'LineWidth', 1.5);
-text(.168, .99, '50ms', 'Parent', ax0)
+ax0         = axes('Position',[0 0 1 1],'Visible','off');
+annotation('line',[.29 .315],[.993 .993],'LineWidth', 1.5);
+text(.26, .994, '50ms', 'Parent', ax0)
 
-axI2 = axes('Position',[.27 .92 .075 .05]); hold on
+axI2 = axes('Position',[.45 rows(end)+.11 .1 .05]); hold on
 for k = 1:2
     fftEnv = [];
     for iCell = 1:size(fullCTR{k},1)
@@ -206,147 +365,10 @@ for k = 1:2
     axI2.FontSize       = 12;
 end
 
-%%% Location %%%
-% dest_dir    = 'X:\Felix\Documents\Publications\FigGnd_Ephys\Figures\raw';
-dest_dir    = '/Users/fschneider/ownCloud/NCL_revision/Figures/raw/';
-typ         = 'muae';
-alp         = .7;
-
-freqStart           = 180;                                          % Tuning low freq [Hz]
-steps               = 14;                                           % No of desired tones
-PT(1)               = freqStart;                                    % Starting frequency [Hz]
-for i = 2:steps                                                 % For no of tones...
-    PT(i)           =  PT(i-1)*2^(1/2);                             % 1/2 octave steps
-end
-frex                = round(PT);
-    
-for iAn = 2:-1:1
-    par = []; mfr_mat = []; mlat_mat = []; cc = 0;
-    
-    if iAn == 1
-        animalID = 'Eric';
-        axC = axes('Position',[.26 .46 .23 .2]); hold on
-    else
-        animalID = 'Dollar';
-        axC = axes('Position',[.28 .13 .23 .2]); hold on
-    end
-    
-    load([dest_dir 'tMap_' animalID '_' typ  '.mat']);
-    imagesc(1:size(mfr_mat,1),-18:-1, flipud(mfr_mat));
-    caxis([floor(log(frex(1))) (ceil(max(max(mfr_mat))*10)/10)+.3])
-
-    if iAn == 1
-        sc = scatter([ML{iAn}],[-AP{iAn}]);
-        axC.YLim = [-18 -5];
-        axC.YLim = [-18 -5];
-    else
-        sc = scatter([ML{iAn}],[-AP{iAn}]);
-        axC.YLim = [-16 -3];
-    end
-    axC.YAxis.Visible   = 'off';
-    axC.XAxis.Visible   = 'off';
-    
-    sc.SizeData         = 20;
-    sc.Marker           = '^';
-    sc.MarkerFaceColor  = [1 0 0];
-    sc.MarkerEdgeColor  = [1 0 0];
-    
-    colormap([[1 1 1]; gray(256)])
-    
-    cm                  = gray(256);
-    axCB                = axes('Position',[.37 .33 .001 .1]);
-    axCB.Visible        = 'off';
-    colormap(axCB, cm)
-    cb                  = colorbar(axCB);
-    cb.Color            = [0 0 0];
-    cb.Position(3)      = .01;
-    cb.Label.String     = 'Best frequency [Hz]';
-    cb.FontSize         = 12;
-    caxis([floor(log(frex(1))) ceil(log(frex(11)))])
-    cb.Ticks            = [log(frex(1)),log(frex(7)),log(frex(11))];
-    cb.TickLabels       = {num2str(frex(1)), num2str(frex(7)), ['>' num2str(frex(11))]};
-end
-
-%%% FIGURE ONSET %%%
-col = [[0 0 0]; [1 0 0]];
-SEM = []; m = []; sd = [];
-mID = {'M1','M2'};
-
-for kk = 1:2
-    if kk == 1
-        axB = axes('Position',[.075 .46 .23 .2]); hold on
-        ofst = .12;
-    else
-        axB = axes('Position',[.075 .13 .23 .2]); hold on
-        ofst = .12;
-    end
-    
-    if useSEM
-        m       = mean(CTR{kk});
-        sd      = std(CTR{kk});
-        n       = size(CTR{kk},1);
-        sem     = sd/(sqrt(n));
-        CI      = [m+sem/2; m-sem/2];
-    else
-        CI      = bootci(nRep,@mean,CTR{kk});
-    end
-    l           = 1:length(CI);
-    len         = [l fliplr(l)];
-    ci          = [CI(1,:) fliplr(CI(2,:))];
-    fill(len,ci,col(1,:)*0.7,'EdgeColor','none', 'FaceAlpha', .3);
-    hold on
-    plot(mean(CTR{kk}), 'Color', col(1,:), 'LineWidth', lw)
-    plot(1:length(SIG{kk}), SIG{kk}+ofst,  'Color', [.5 .5 .5], 'LineWidth', 3);
-    
-    if useSEM
-        m       = mean(FIG{kk});
-        sd      = std(FIG{kk});
-        n       = size(FIG{kk},1);
-        sem     = sd/(sqrt(n));
-        CI      = [m+sem/2; m-sem/2];
-    else
-        CI      = bootci(nRep,@mean,FIG{kk});
-    end
-    l           = 1:length(CI);
-    len         = [l fliplr(l)];
-    ci          = [CI(1,:) fliplr(CI(2,:))];
-    fill(len,ci,col(2,:)*0.7,'EdgeColor','none', 'FaceAlpha', .3);
-    hold on
-    plot(mean(FIG{kk}), 'Color', col(2,:), 'LineWidth', lw)
-    
-    axB.XLim            = [1 600];
-    axB.XTick           = [1 200 400 600];
-    axB.XTickLabel      = {'-200','0','200','400'};
-    axB.XLabel.String   = 'Time [ms]';
-    axB.YLabel.String   = {mID{kk};'MUA [norm]'};
-    axB.FontSize        = 14;
-    line([200 200],[-1 2], 'LineStyle', '--', 'LineWidth',lw, 'Color','k')
-    
-    if kk == 1
-        axB.YLim = [1.01 1.12];
-        text(50,1.103, 'CTR', 'FontSize', 12, 'Color', 'k', 'FontWeight', 'bold')
-        text(50,1.11, 'FIG', 'FontSize', 12, 'Color', 'r', 'FontWeight', 'bold')
-        of = diff(axB.YLim)*.04;
-        lv = axB.YLim(1)+of;
-    else
-        axB.YLim = [1.01 1.12];
-%         text(50,1.1, 'CTR', 'FontSize', 12, 'Color', 'k', 'FontWeight', 'bold')
-%         text(50,1.11, 'FIG', 'FontSize', 12, 'Color', 'r', 'FontWeight', 'bold')
-        of = diff(axB.YLim)*.04;
-        lv = axB.YLim(1)+of;
-    end
-    
-    seq = [lv lv+of lv+of lv lv lv-of lv-of lv];
-    ch  = [0 5 45 50];
-    for ic = 1:12
-        fi  = fill([ch fliplr(ch)],seq, [0 0 0], 'LineStyle','none');
-        ch  = ch+50;
-    end
-end
-
 %% Get data
 
-mt8 = []; mt12 = []; mc = []; FG8 = []; FG12 = []; COH = []; F8 = []; F12 = []; lat8 = []; lat12 = [];
+clearvars -except muaeE muaeD lfpE lfpD indxR indx typ dest_dir alph rows f
+
 for iAn = 1:2
     
     ant = []; pos = []; muae = [];
@@ -456,7 +478,10 @@ p12 = fdr(p12);
 lw      = 1.5;
 col     = [0 0 0; 0 .9 0; .9 0 0];
 dist    = 'sem';
-dim     = [.2 .2];
+dim     = [.2 .15];
+clm     = [.53 .78];
+rowBox  = [.05 .21];
+
 
 for iAn = 1:2
     for iFi = 1:2
@@ -477,25 +502,35 @@ for iAn = 1:2
         
         %%% TIME TRACE %%%
         if iFi == 1 && iAn == 1
-            axA = axes('Position',[.53 .77 .2 .2]); hold on
-            axA.Title.String = 'M1';
+            axA = axes('Position',[clm(1) rows(2) dim]); hold on
+            axA.Title.String = 'ANT';
             axA.XAxis.Visible = 'off';
             str = 'ant';
         elseif iFi == 2 && iAn == 1
-            axA = axes('Position',[.53 .53 .2 .2]); hold on
+            axA = axes('Position',[clm(2) rows(2)  dim]); hold on
+            axA.Title.String = 'POS';
+            axA.XAxis.Visible = 'off';
             str = 'pos';
         elseif iFi == 1 && iAn == 2
-            axA = axes('Position',[.78 .77 .2 .2]); hold on
-            axA.Title.String = 'M2';
-            axA.XAxis.Visible = 'off';
+            axA = axes('Position',[clm(1) rows(1) dim]); hold on
             str = 'ant';
         elseif iFi == 2 && iAn == 2
-            axA = axes('Position',[.78 .53 .2 .2]); hold on
+            axA = axes('Position',[clm(2) rows(1) dim]); hold on
             str = 'pos';
         end
         
+        [pc0,pc8,pc12] = plotFRsumm(mt8{iAn,iFi}(:,1:600),mt12{iAn,iFi}(:,1:600),mc{iAn,iFi}(:,1:600),str, dist,animalID, 0, col);
         axA.XLim = [1 600];
-        plotFRsumm(mt8{iAn,iFi}(:,1:600),mt12{iAn,iFi}(:,1:600),mc{iAn,iFi}(:,1:600),str, dist,animalID, 0, col)
+        
+        if iAn == 1
+            axA.YLabel.String = {'M1','MUA [norm]'};
+        else
+            axA.YLabel.String = {'M2','MUA [norm]'};
+        end
+        
+        if iFi == 2
+            axA.YLabel.String = [];
+        end
         
         of      = diff(axA.YLim)*.04;
         lv      = axA.YLim(1)+of;
@@ -506,25 +541,20 @@ for iAn = 1:2
             ch  = ch+50;
         end
         
-        if iAn == 2
-            axA.YLabel.String = [];
-        elseif iFi == 1 && iAn == 1
-            text(50,1.12, 'COH12', 'FontSize', 12, 'Color', col(3,:), 'FontWeight', 'bold')
-            text(50,1.113, 'COH8', 'FontSize', 12, 'Color', col(2,:), 'FontWeight', 'bold')
-            text(50,1.106, 'CTR', 'FontSize', 12, 'Color', col(1,:), 'FontWeight', 'bold')
-        end
         
         %%% BAR PLOT %%%
         if iFi == 1 && iAn == 1
-            axB1 = axes('Position',[.53 .23 dim]); hold on
+            axB1 = axes('Position',[clm(1) rowBox(2)  dim]); hold on
             axB1.XAxis.Visible = 'off';
+            axB1.YLabel.String = {'M1','d-prime'};
         elseif iFi == 2 && iAn == 1
-            axB1 = axes('Position',[.53 .03 dim]); hold on
-        elseif iFi == 1 && iAn == 2
-            axB1 = axes('Position',[.77 .23 dim]); hold on
+            axB1 = axes('Position',[clm(2) rowBox(2)  dim]); hold on
             axB1.XAxis.Visible = 'off';
+        elseif iFi == 1 && iAn == 2
+            axB1 = axes('Position',[clm(1) rowBox(1)  dim]); hold on
+            axB1.YLabel.String = {'M2','d-prime'};
         elseif iFi == 2 && iAn == 2
-            axB1 = axes('Position',[.77 .03 dim]); hold on
+            axB1 = axes('Position',[clm(2) rowBox(1)  dim]); hold on
         end
         
         arr = []; mat = [];
@@ -580,41 +610,45 @@ for iAn = 1:2
                 star.MarkerSize = 8;
             end
         end
-        
-        if iAn == 1
-            if iFi == 1
-                axB1.YLabel.String = {'ANT'; 'd-prime'};
-                axB1. Position = [.53 .27 dim];
-            else
-                axB1.YLabel.String = {'POS'; 'd-prime'};
-                axB1. Position = [.53 .05 dim];
-            end
-        else
-            if iFi == 1
-                axB1. Position = [.77 .27 dim];
-            else
-                axB1. Position = [.77 .05 dim];
-            end
-        end
-        
+ 
         axB1.XTick              = [1 2 3];
-        axB1.XTickLabel         = {'Coh8-Ctr', 'Coh12-Ctr', 'Coh12-Coh8'};
-        axB1.XTickLabelRotation = 10;
+        axB1.XTickLabel         = {'Coh8-CTR', 'Coh12-CTR', 'Coh12-Coh8'};
+        axB1.XTickLabelRotation = 12;
         axB1.FontSize           = 14;
         axB1.YLim               = [-.3 .7];
  
+        if iFi == 1 && iAn == 1
+            axB1.Position = [clm(1) rowBox(2)  dim];
+        elseif iFi == 2 && iAn == 1
+            axB1.Position = [clm(2) rowBox(2)  dim];
+        elseif iFi == 1 && iAn == 2
+            axB1.Position = [clm(1) rowBox(1)  dim];
+        elseif iFi == 2 && iAn == 2
+            axB1.Position = [clm(2) rowBox(1)  dim];
+        end
     end
 end
 
+lg              = legend([pc0,pc8,pc12],{'CTR','Coh8','Coh12'});
+lg.FontSize     = 10;
+lg.Position(2)  = rows(1)+.075;
+lg.Position(1)  = clm(1)+.068;
+lg.Box          = 'off';
+
 ax0 = axes('Position',[0 0 1 1],'Visible','off');
-text(0,.98, 'a', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
-text(0,.68, 'b', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
-text(.32,.68, 'c', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
-text(.46,.98, 'd', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
-text(.46,.5, 'e', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(0,.99, 'a', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(0,.765, 'b', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(.44,.765, 'd', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(.44,.355, 'e', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(0,.355, 'c', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 
 % addpath X:\Felix\Scripts\Stuff\export_fig-master
 dest_dir = '/Users/fschneider/ownCloud/NCL_revision/Figures/';
-export_fig([dest_dir 'FIG2'], '-r400',f);
-exportgraphics(f,[dest_dir 'FIG2.pdf'],'ContentType','vector','Resolution',300)
+export_fig([dest_dir 'FIG3'], '-r400',f);
+% exportgraphics(f,[dest_dir 'FIG2.pdf'],'ContentType','vector','Resolution',300)
+
+set(f,'Units','Inches');
+pos = get(f,'Position');
+set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
+print(f, [dest_dir 'FIG3'], '-dpdf', '-r400'); 
 

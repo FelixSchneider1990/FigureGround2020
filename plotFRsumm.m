@@ -1,4 +1,4 @@
-function plotFRsumm(mtar8,mtar12,mctr,str, dist,animalID, minBin, cm, mtar4, mctr_2)
+function [p0,p8,p12] = plotFRsumm(mtar8,mtar12,mctr,str, dist,animalID, minBin, cm, mtar4, mctr_2)
 
 % Difference fig-ctr for each cell
 diff8               = mtar8(:,1:600) - mctr(:,1:600);
@@ -145,17 +145,23 @@ ax.XTickLabel = {-200 0 200 400};
 xlabel('Time [ms]')
 box off
 
+% if strcmp(str, 'ant')
+%     ylabel({'ANT';'MUA [norm]'})
+% else
+%     ylabel({'POS';'MUA [norm]'})
+% end
+
 if strcmp(str, 'ant')
-    ylabel({'ANT';'MUA [norm]'})
+    ylabel({'MUA [norm]'})
 else
-    ylabel({'POS';'MUA [norm]'})
+    ylabel({'MUA [norm]'})
 end
 
 switch animalID
     case 'Dollar'
         if strcmp(str, 'ant')
 %             ax.YTick = [1 1.1];
-            ax.YLim = [1 1.13];
+            ax.YLim = [1 1.16];
             plot([200 200], [-1 2], 'k--', 'Linewidth', 1.5)
         elseif strcmp(str, 'pos')
 %             ax.YTick = [1 1.1];
@@ -189,7 +195,7 @@ switch animalID
     case 'Eric'
         if strcmp(str, 'ant')
 %             ax.YTick = [1 1.1];
-            ax.YLim = [1 1.13];
+            ax.YLim = [1 1.16];
             plot([200 200], [-1 2], 'k--', 'Linewidth', 1.5)
         elseif strcmp(str, 'pos')
 %             ax.YTick = [1 1.1];
@@ -203,6 +209,7 @@ switch animalID
         plot(1:length(sig12), sig12,  'Color', cm(3,:), 'LineWidth', 3);
             
 end
+
 % print(f,['Y:\EPHYS\RAWDATA\NHP\Neuralynx\FigureGround\' animalID '\Plots\FRsummary_' str], '-dpng', '-r500')
 
 end

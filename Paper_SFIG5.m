@@ -94,7 +94,7 @@ pCorr = fdr(pCorr);
 
 %%
 
-f   = figure('Units', 'normalized', 'Position', [0 0 .6 .6]); set(gcf,'color', [1 1 1]); axis off
+f   = figure('Units', 'normalized', 'Position', [0 0 .8 .8]); set(gcf,'color', [1 1 1]); axis off
 col = [0 .9 0; .9 0 0];
 dim = [.2 .2];
 r   = linspace(.08, .74,4);
@@ -355,10 +355,11 @@ for iAn = 1:2
 end
 
 ax0 = axes('Position',[0 0 1 1],'Visible','off');
-text(0,.98, 'a', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(0.01,.98, 'a', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 text(.52,.98, 'b', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 text(.52,.6, 'c', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 
 addpath /Users/fschneider/Documents/MATLAB/altmany-export_fig-8b0ba13
 dest_dir = '/Users/fschneider/ownCloud/NCL_revision/Figures/';
 export_fig([dest_dir 'SFIG_control'], '-r400',f);
+exportgraphics(f,[dest_dir 'SFIG_control.pdf'],'ContentType','vector','Resolution',300)

@@ -309,10 +309,10 @@ field = [zeros(sz{1,1}(1),1)+1; ...
 
 %% FIG 3 %%%
 
-signrank(AUCFD{1,1},AUCFO{1,1})
-signrank(AUCFD{1,2},AUCFO{1,2})
-signrank(AUCFD{2,1},AUCFO{2,1})
-signrank(AUCFD{2,2},AUCFO{2,2})
+[P,H,STATS] = signrank(AUCFD{1,1},AUCFO{1,1})
+[P,H,STATS] = signrank(AUCFD{1,2},AUCFO{1,2})
+[P,H,STATS] = signrank(AUCFD{2,1},AUCFO{2,1})
+[P,H,STATS] = signrank(AUCFD{2,2},AUCFO{2,2})
 
 nanmean(AUCFD{1,1} - AUCFO{1,1})
 nanmean(AUCFD{1,2} - AUCFO{1,2})

@@ -26,7 +26,7 @@ for iCl = 1:length(cFreq)
     clkLFP{iCl}  = exludeTrials(clkLFP{iCl}, [], 5, 'PEAK', 'NAN', 1, 1000);
 end
 
-f           = figure('Units', 'normalized', 'Position', [0 0 .4 .5]); set(gcf,'color', [1 1 1]);
+f           = figure('Units', 'normalized', 'Position', [0 0 .6 .7]); set(gcf,'color', [1 1 1]);
 ax0         = axes('Position',[0 0 1 1],'Visible','off');
 dim         = size(clkLFP);
 maxVLFP     = 400;
@@ -40,7 +40,7 @@ Fs          = 1000;                                                  	% Sampling
 T           = 1/Fs;                                                    	% Sampling period
 L           = 200;                                                   	% Length of signal
 t           = (0:L-1)*T;                                             	% Time vector
-f           = Fs*(0:(L/2))/L;                                           % Frequency vector
+frq           = Fs*(0:(L/2))/L;                                           % Frequency vector
 cc = 0;
 for iFreq = 1:dim(2)
     
@@ -134,9 +134,9 @@ for iFreq = 1:dim(2)
     thresh              = m + s*2;
     avg                 = nanmean(fftSig);
     nV                  = max(max(avg), max(thresh));
-    plot(f,avg./nV, 'LineWidth', 2, 'Color', cm(1,:), 'Parent', axF)
+    plot(frq,avg./nV, 'LineWidth', 2, 'Color', cm(1,:), 'Parent', axF)
     hold on
-    plot(f,thresh./nV, 'LineWidth', 2, 'Color', 'k', 'Parent', axF)
+    plot(frq,thresh./nV, 'LineWidth', 2, 'Color', 'k', 'Parent', axF)
     
     if iFreq == 1
         axF.XColor          = [0 0 0];
@@ -162,9 +162,15 @@ for iFreq = 1:dim(2)
     end
 end
 
-text(0,.98, 'a', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
-text(0,.31, 'b', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(0.01,.98, 'a', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(0.01,.31, 'b', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 
 addpath /Users/fschneider/Documents/MATLAB/altmany-export_fig-8b0ba13
 dest_dir = '/Users/fschneider/ownCloud/NCL_revision/Figures/';
 export_fig([dest_dir 'SFIG2'], '-r400',f);
+% exportgraphics(f,[dest_dir 'SFIG2.pdf'],'ContentType','vector','Resolution',300)
+
+set(f,'Units','Inches');
+pos = get(f,'Position');
+set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
+print(f, [dest_dir 'SFIG2'], '-dpdf', '-r400'); 

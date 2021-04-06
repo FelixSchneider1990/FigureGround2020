@@ -28,9 +28,12 @@ nVE        	= mean(avgSFGenv(101:500));
 
 figs        = data.stimSpecs.fig;
 frMat       = data.stimSpecs.freq_mat;
+perc        = .88;
+
+
 cm          = [[0 0 0]; [0 .9 0]; [.9 0 0]];
 
-f = figure('Units', 'normalized', 'Position', [0 0 .8 1]);
+f = figure('Units', 'normalized', 'Position', [0 0 1 1]);
 set(gcf,'color', [1 1 1]);
 axis off
 ax0 = axes('Position',[0 0 1 1],'Visible','off');
@@ -114,7 +117,7 @@ for iSt = 1:length(stID)*.6
         yyaxis left
         fi = fill([1:600 600:-1:1],[mFIGe+semFIGe/2 fliplr(mFIGe-semFIGe/2)], [.5 .5 .5], 'LineStyle','none');
         fi.FaceAlpha = .3;
-        plot(mFIGe, 'Color', [.5 .5 .5], 'LineWidth', 2, 'LineStyle', '-');
+        pEnv = plot(mFIGe, 'Color', [.5 .5 .5], 'LineWidth', 2, 'LineStyle', '-');
         axF.YTick = [0 1 2];
         axF.YLim = [.5 2.5];
         axF.YLabel.String = 'MUA envelope [norm]';
@@ -123,7 +126,7 @@ for iSt = 1:length(stID)*.6
         yyaxis right
         fi1 = fill([1:600 600:-1:1],[mFIG+semFIG/2 fliplr(mFIG-semFIG/2)], [0 0 0], 'LineStyle','none');
         fi1.FaceAlpha = .3;
-        plot(mFIG, 'Color', [0 0 0], 'LineWidth', 2, 'LineStyle', '-');
+        pSpks = plot(mFIG, 'Color', [0 0 0], 'LineWidth', 2, 'LineStyle', '-');
         axF.YTick = [0 5 10];
         axF.YLim = [-1 10];
         axF.YAxis(2).Color = [0 0 0];
@@ -141,7 +144,7 @@ for iSt = 1:length(stID)*.6
         l.Color = cm(2,:);
         l.LineStyle = '--';
         l.LineWidth = 2;
-        tt = text(45,axF.YLim(2)*.9,'Coh8', 'Parent', axF, 'FontSize', 14, 'Color', cm(2,:));
+        tt = text(45,axF.YLim(2)*perc,'Coh8', 'Parent', axF, 'FontSize', 14, 'Color', cm(2,:));
         
         if iSt ~= 1
             axRF.YAxis.Visible = 'off';
@@ -151,6 +154,12 @@ for iSt = 1:length(stID)*.6
         else
             axRF.YLabel.String = 'Trials';
             axF.XLabel.String = 'Time [ms]';
+            
+            lg = legend([pEnv, pSpks],{'Envelope','Spikes'});
+            lg.FontSize     = 10;
+            lg.Position(2)  = .82;
+            lg.Position(1)  = .12;
+            lg.Box          = 'off';
         end
         
     else
@@ -216,7 +225,7 @@ for iSt = 1:length(stID)*.6
         l.Color = cm(3,:);
         l.LineStyle = '--';
         l.LineWidth = 2;
-        tt = text(40,axF.YLim(2)*.9,'Coh12', 'Parent', axF, 'FontSize', 14, 'Color', cm(3,:));
+        tt = text(40,axF.YLim(2)*perc,'Coh12', 'Parent', axF, 'FontSize', 14, 'Color', cm(3,:));
         
         axRF.YAxis.Visible = 'off';
         axF.YAxis(1).Visible = 'off';
@@ -238,7 +247,7 @@ P2              = abs(y/L);
 P1              = P2(1:L/2+1);
 P1(2:end-1)     = 2*P1(2:end-1);
 
-axFFT = axes('Position',[row(1) .05 .15 .2]); hold on
+axFFT = axes('Position',[row(1) .06 .15 .2]); hold on
 plot(frfft,P1./ max(P1), 'k', 'LineWidth', 2)
 axFFT.XColor = [0 0 0];
 axFFT.YColor = [0 0 0];
@@ -254,7 +263,7 @@ box off
 %%% Mean FR in 1st and 2nd window %%%
 cc = zeros(size(cFR,1),1);
 ff = ones(size(mFR,1)/2,1);
-axB = axes('Position',[row(1)+.18 .05 .12 .2]);
+axB = axes('Position',[row(1)+.18 .07 .12 .2]);
 hold on
 bx = boxplot([cFR(:,1); mFR(1:6,1); mFR(7:12,1)], ...
     [cc; ff+1; ff+2;],...
@@ -280,11 +289,11 @@ axB.XColor = [0 0 0];
 axB.YColor = [0 0 0];
 axB.FontSize = 14;
 axB.Title.String = 'Threshold';
-axB.YLabel.String = 'FR [norm]';
+axB.YLabel.String = 'MUA [norm]';
 axB.XAxis.FontSize = 14;
 box off
 
-axBB = axes('Position',[row(1)+.31 .05 .12 .2]);
+axBB = axes('Position',[row(1)+.31 .06 .12 .2]);
 hold on
 bx = boxplot([cFRe(:,1); mMUA(1:6,1); mMUA(7:12,1);], ...
     [cc; ff+1; ff+2;],...
@@ -329,7 +338,7 @@ end
 rf          = RF./max(RF);
 ff          = fit((1:14)', rf', 'smoothingspline', 'SmoothingParam', .95);
 hm          = max(rf) - (diff([min(rf) max(rf)]) / 2);
-axRF        =  axes('Position',[row(1)+.73 .05 .2 .2]); hold on
+axRF        =  axes('Position',[row(1)+.73 .06 .2 .2]); hold on
 % plot(rf, 'k', 'LineWidth', 2)
 plot(ff(1:14), 'k', 'LineWidth', 2)
 axRF. XLim = [1 14];
@@ -363,7 +372,7 @@ p.EdgeColor = 'none';
 no = getFreqRF(RF, figfreqs);
 f8 = no(1:6, :);
 f12 = no(7:12, :);
-axFE1 = axes('Position',[row(1)+.48 .05 .2 .2]); hold on
+axFE1 = axes('Position',[row(1)+.48 .06 .2 .2]); hold on
 
 for i = 1:size(f8,1)
     lf8(i,:) = polyfit(1:8,f8(i,:),1);
@@ -396,14 +405,14 @@ axFE1.XLim = [0 9];
 axFE1.XTick = [1:8];
 axFE1.XColor = [0 0 0];
 axFE1.YColor = [0 0 0];
-axFE1.YLabel.String = 'FreqElements in RF';
-axFE1.XLabel.String = 'Chords from FigOn';
+axFE1.YLabel.String = 'Frequency Elements in RF';
+axFE1.XLabel.String = 'Chords from Figure Onset';
 box off
 
 text(0,.98, 'a', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 text(0,.3, 'b', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 text(0.20,.3, 'c', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
-text(.49,.3, 'd', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
+text(.48,.3, 'd', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 text(.74,.3, 'e', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bold')
 
 % addpath X:\Felix\Scripts\Stuff\export_fig-master
@@ -414,3 +423,8 @@ text(.74,.3, 'e', 'Parent', ax0, 'FontSize', 30, 'Color', 'k', 'FontWeight', 'bo
 addpath /Users/fschneider/Documents/MATLAB/altmany-export_fig-8b0ba13
 dest_dir = '/Users/fschneider/ownCloud/NCL_revision/Figures/';
 export_fig([dest_dir 'SFIG_SU'], '-r400',f);
+% % exportgraphics(f,[dest_dir 'SFIG_SU.pdf'],'ContentType','vector','Resolution',300)
+set(f,'Units','Inches');
+pos = get(f,'Position');
+set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
+print(f, [dest_dir 'SFIG_SU'], '-dpdf', '-r400'); 
