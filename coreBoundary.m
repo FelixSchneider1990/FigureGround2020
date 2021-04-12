@@ -3,11 +3,11 @@ function [x,y] = coreBoundary(tMap,vec1, vec2, plotFlag, animalID)
 
 source  = tMap(vec1,vec2);
 
-if strcmp(animalID, 'Eric')
+if strcmp(animalID, 'Eric') || strcmp(animalID, 'M1')
     source(1,2) = nan;
 end
 
-if strcmp(animalID, 'Dollar')
+if strcmp(animalID, 'Dollar') || strcmp(animalID, 'M2')
     source(1,4) = nan;
     source(end-1:end,7) = nan;
 end
